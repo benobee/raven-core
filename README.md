@@ -52,10 +52,8 @@ Example:
 
   Raven.extend({
     methodName() {
-
-      //method code
-
+      this.runMethodCode();
     }
   });
 
-********************************************"# raven-core" 
+********************************************
