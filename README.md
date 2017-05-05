@@ -1,5 +1,5 @@
 ******************************************** 
-# COMPONENT LITERAL
+# RAVEN CORE
 
 **Description**
 

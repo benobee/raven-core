@@ -1,0 +1,1 @@
+module.exports = require('./dist/raven-core.min.js');
