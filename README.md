@@ -13,6 +13,17 @@ Usage
 
 ********************************************
 
+On Startup
+
+Example:
+
+  Raven.onStartup(() => {
+      this.init();
+  });
+
+
+********************************************
+
 Raven Methods
 
 Example: 

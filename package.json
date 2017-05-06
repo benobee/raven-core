@@ -1,6 +1,6 @@
 {
   "name": "raven-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core app structure, with publish and subscribe events. ( Inspired by Meteor.js syntax. )",
   "main": "./src/core/core.js",
   "scripts": {

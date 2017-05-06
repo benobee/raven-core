@@ -1,25 +1,36 @@
 import Events from '../events/events';
-import Util from '../util/util';
 
 class App_Build {
 	constructor() {
 		this.extend(Events);
-		this.extend(Util);
+
+		this.core = {
+			methods: {}
+		};
+
+		console.log(this);
+
+		window.Raven = this;
 	}
 	extend(obj) {
 		Object.assign(this, obj);
 	}
 	methods(func) {
-		Object.assign(this, func);
+		Object.assign(this.core.methods, func);
 	}
 	call(methodName, ...args) {
 		const props = args[ 0 ];
 		
-		this[ methodName ].call(this[ methodName ], props);
+		this.core.methods[ methodName ].call(this.core.methods[ methodName ], props);
 
 		//callback
 		if (typeof (args[ args.length - 1]) === "function") {
 			args[ args.length - 1 ].call(props, props);
+		}
+	}
+	onStartup(func) {
+		if (func) {
+			func();			
 		}
 	}
 }
