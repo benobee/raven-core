@@ -3,7 +3,12 @@
 /****************************************/
 
 const webpack = require("webpack");
+
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
+const path = require('path');
+
+let isProduction = false;
 
 /****************************************/
 /*******     CONFIG OBJECT      *********/
@@ -20,9 +25,11 @@ const WEBPACK_CONFIG = { module: {} };
  * production using "npm run build" from
  * the terminal. If true, file names will
  * be hashed, js will be minified.
-*/
+ */
 
-const isProduction = JSON.parse(process.env.PROD_ENV ? true : false);
+if (process.env.PROD_ENV === 'true') {
+    isProduction = true;
+}
 
 /***************************************/
 /*********       INPUT        **********/
@@ -32,8 +39,6 @@ const input = {
     entry: ['./src/core/core.js'],
     devtool: isProduction ? '' : 'eval',
     node: {
-        dns: 'mock',
-        net: 'mock',
         fs: 'empty'
     }
 };
@@ -48,41 +53,50 @@ Object.assign(WEBPACK_CONFIG, input);
 /*
  * each loader will push to this rules
  * array then added to WEBPACK_CONFIG.
-*/
+ */
 
 const rules = [];
 
 /*********************/
+// @rule: HTML
+const HTMLRules = {
+    test: /\.html$/,
+    exclude: /node_modules/,
+    use: { 
+        loader: 'html-loader' 
+    }
+}
 
-// @rule: Babel
-const babel = {
-    test: /\.js$/, 
+rules.push(HTMLRules);
+
+// @rule: JS
+const JSRules = {
+    enforce: 'pre',
+    test: /\.js$/,
     exclude: /node_modules/,
     use: [
+        "babel-loader",
         {
-            loader: 'babel-loader',
-            options: { presets: 
-                ['es2015'] //NEED TO USE WEBPACK MODULES INSTEAD
-            }       
-        }
+            loader: "eslint-loader",
+            options: {
+                emitWarning: true,
+                fix: true
+            }
+        },
     ]
 };
 
-rules.push(babel);
+rules.push(JSRules);
 
 /*********************/
 
 // @rule: json
-const jsonLoader = { 
+const JSONRules = {
     test: /\.json$/,
-    use: [
-        {
-            loader: "json-loader",
-        }
-    ]
+    use: "json-loader"
 };
 
-rules.push(jsonLoader);
+rules.push(JSONRules);
 
 /*********************/
 
@@ -96,7 +110,7 @@ WEBPACK_CONFIG.module.rules = rules;
  * each plugin will push to this plugins
  * array. Some will only be pushed when
  * config is set to production. 
-*/
+ */
 
 const plugins = [];
 
@@ -104,9 +118,9 @@ const plugins = [];
 
 // @plugin: node env
 const nodeENV = new webpack.DefinePlugin({
-  'process.env': {
-    NODE_ENV: JSON.stringify('production')
-  }
+    'process.env': {
+        NODE_ENV: JSON.stringify('production')
+    }
 });
 
 isProduction ? plugins.push(nodeENV) : false;
@@ -115,7 +129,7 @@ isProduction ? plugins.push(nodeENV) : false;
 
 // @plugin: handling es6 promises
 const promises = new webpack.ProvidePlugin({
-    'Promise': 'es6-promise', 
+    'Promise': 'es6-promise',
     'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
 });
 
@@ -125,20 +139,23 @@ plugins.push(promises);
 
 // @plugin: for minifying javascript
 const minify = new webpack.optimize.UglifyJsPlugin({
-    compress: { 
-        warnings: false 
+    compress: {
+        warnings: false
     },
     output: {
         comments: false
     },
-    minimize: isProduction ? true : false,
-    debug: false,
+    minimize: true,
+    debug: true,
     sourceMap: true,
-    minify: true
+    minify: true,
 });
 
 //if production is set, js will be minified
-isProduction ? plugins.push(minify) : false;
+
+if (isProduction) {
+    plugins.push(minify);
+}
 
 //output to config object
 WEBPACK_CONFIG.plugins = plugins;
@@ -148,9 +165,9 @@ WEBPACK_CONFIG.plugins = plugins;
 /************************************/
 const output = {
     output: {
-          publicPath: '/',
-          path: __dirname + "/dist",
-          filename: "raven-core.min.js"
+        publicPath: '/',
+        path: __dirname + "/dist",
+        filename: isProduction ? "raven-core.min.js" : "raven-core.js"
     }
 };
 

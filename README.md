@@ -17,9 +17,9 @@ On Startup
 
 Example:
 
-  Raven.onStartup(() => {
-      this.init();
-  });
+  	Raven.onStartup(() => {
+  	    this.init();
+  	});
 
 
 ********************************************

@@ -1,40 +1,30 @@
 import Events from '../events/events';
+import Component from '../component/component'; 
 
 class App_Build {
-	constructor() {
-		this.extend(Events);
+	constructor(obj) {
+		this.events = Events;
+		this.components = [];
 
-		this.core = {
-			methods: {}
-		};
-
-		console.log(this);
-
-		window.Raven = this;
-	}
-	extend(obj) {
 		Object.assign(this, obj);
-	}
-	methods(func) {
-		Object.assign(this.core.methods, func);
-	}
-	call(methodName, ...args) {
-		const props = args[ 0 ];
-		
-		this.core.methods[ methodName ].call(this.core.methods[ methodName ], props);
 
-		//callback
-		if (typeof (args[ args.length - 1]) === "function") {
-			args[ args.length - 1 ].call(props, props);
-		}
+		this.on("app-loaded", () => {
+			console.log("app-loaded: ", this);
+		});
+
+		this.emit("app-loaded");
 	}
-	onStartup(func) {
-		if (func) {
-			func();			
-		}
+	on (event, listener) {
+		this.events.on(event, listener);
+	}
+	emit (event, data) {
+		this.events.emit(event, data);
+	}
+	component (type, options) {
+		const component = new Component(type, options);
+
+		this.components.push(component);
 	}
 }
 
-const Raven = new App_Build();
-
-export default Raven;
+export default App_Build;
