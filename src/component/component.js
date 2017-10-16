@@ -1,12 +1,16 @@
-import Template from './template';
 import morphdom from 'morphdom';
-import util from './util';
 
 class Component {
     constructor(componentName, options) {
-        this.template = options.template;
+        this.node = options.node;
         this.data = options.data();
-        this.initNode(componentName, options.type);
+        this.html = this.parseHTML(options.html);
+        this.render(options.node);
+
+        //this.initNode(componentName, options.type);
+    }
+    render(target) {
+        document.querySelector(target);
     }
     initNode(componentName, elementType) {
 
@@ -80,7 +84,7 @@ class Component {
             return item;
         });
 
-        return html;
+        return this.formatHTML(html);
     }
     formatString(str) {
         str = str.replace(/[\n\r]+/g, '')

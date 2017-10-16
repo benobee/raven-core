@@ -1,7 +1,10 @@
 import Raven from "../src/core/core";
-import template from "./test.html";
+import person from "./person";
 
 const App = new Raven({
+	components: [
+		person
+	],
 	methods: {
 		have () {
 			return "have";
@@ -12,18 +15,4 @@ const App = new Raven({
 	}
 });
 
-const person = App.component('person', {
-	template,
-	data () {
-		return {
-			name: "Ben",
-			age: "39",
-			classNames: {
-				isActive: "active",
-				isHidden: "hidden"
-			},
-			list: [1, 2, 3, 4, 5]
-		};
-	}
-});
 
