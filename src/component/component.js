@@ -2,9 +2,11 @@ import morphdom from 'morphdom';
 
 class Component {
     constructor(componentName, options) {
+        this.label = componentName;
         this.node = options.node;
         this.data = options.data();
         this.html = this.parseHTML(options.html);
+
         this.render(options.node);
 
         //this.initNode(componentName, options.type);

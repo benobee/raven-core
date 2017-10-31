@@ -1,32 +1,18 @@
-import Events from '../events/events';
-import Component from '../component/component';
+import Component from "../component/component";
 
-class App_Build {
-    constructor(obj) {
-        this.events = Events;
-        this.components = [];
+const Raven = (options) => {
+    return {
+    	options,
+        componentList: [],
+        component(componentName, config) {
+            // Component factory method
+            const component = new Component(componentName, config);
 
-        Object.assign(this, obj);
+            this.componentList.push(component);
 
-        this.on("app-loaded", () => {
-            console.log("app-loaded: ", this);
-        });
+            return component;
+        }
+    };
+};
 
-        this.emit("app-loaded");
-    }
-    on(event, listener) {
-        this.events.on(event, listener);
-    }
-    emit(event, data) {
-        this.events.emit(event, data);
-    }
-    component(type, options) {
-        const component = new Component(type, options);
-
-        this.components.push(component);
-
-        return this;
-    }
-}
-
-export default App_Build;
+export default Raven;

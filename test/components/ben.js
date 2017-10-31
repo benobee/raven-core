@@ -1,8 +1,8 @@
 import html from "./person.html";
-import Raven from "../src/core/core";
+import app from "./app";
 
-Raven.component('person', {
-	node: "#main",
+const ben = app.component({
+	node: "#ben",
 	html,
 	data () {
 		return {
@@ -16,3 +16,5 @@ Raven.component('person', {
 		};
 	}
 });
+
+export default ben;
