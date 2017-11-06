@@ -1,9 +1,12 @@
 import Raven from "../src/core/core";
+import * as components from "./components";
 
-const app = new Raven({
-	isActive: true
+Raven.helpers({
+
 });
 
-console.log(app);
+Raven.methods({
 
-export default app;
+});
+
+console.log(Raven);

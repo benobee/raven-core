@@ -2,32 +2,25 @@ import morphdom from 'morphdom';
 
 class Component {
     constructor(componentName, options) {
-        this.label = componentName;
+        this.componentName = componentName;
         this.node = options.node;
         this.data = options.data();
-        this.html = this.parseHTML(options.html);
-
-        this.render(options.node);
-
-        //this.initNode(componentName, options.type);
+        this.html = options.html;
     }
-    render(target) {
-        document.querySelector(target);
-    }
-    initNode(componentName, elementType) {
+    render() {
+        this.html = this.parseHTML(this.html);
 
-        if (!elementType) {
-            elementType = "div";
-        }
+        // create parent div for injection
+        const div = document.createElement('div');
 
-        const div = document.createElement(elementType);
+        // search for the component element by name
+        const target = document.querySelectorAll(this.componentName);
 
-        const target = document.querySelectorAll(componentName);
-
+        // for each of the components render the html
         target.forEach((item) => {
-            const html = this.parseHTML(item.innerHTML);
             const clone = div.cloneNode();
 
+            // get the attriutes for the parent node and transfer
             for (let value in item.attributes) {
                 if (item.attributes) {
                     const name = item.attributes[ value ].name;
@@ -40,11 +33,17 @@ class Component {
                 }
             }
 
-            clone.innerHTML = html;
-            this.$el = clone;
+            // set the inner html of the cloned node and
+            // inject the html
+            clone.innerHTML = this.html;
+            this.node = clone;
             this.html = this.formatHTML(clone.outerHTML);
+            this.parseAttributes(this.html);
             item.outerHTML = this.html;
         });
+    }
+    parseAttributes(html) {
+        const match = html;
     }
     getResults(str, obj) {
         let results = false;
@@ -66,25 +65,27 @@ class Component {
         return results;
     }
     parseHTML(html) {
+        // search for variables inside brackets
         let matches = html.match(/{[^}]*}/g);
 
-        matches = matches.map((item) => {
-            item = {
-                str: this.formatString(item),
-                index: html.indexOf(item),
-                length: item.length
-            };
+        if (matches) {
+            matches = matches.map((item) => {
+                item = {
+                    str: this.formatString(item),
+                    index: html.indexOf(item),
+                    length: item.length
+                };
 
-            let value = "";
+                let value = "";
 
-            const split = item.str.split(".");
+                const split = item.str.split(".");
 
-            value = this.getResults(split, this.data);
+                value = this.getResults(split, this.data);
+                html = html.substr(0, item.index) + value + html.substr(item.index + item.length, html.length);
 
-            html = html.substr(0, item.index) + value + html.substr(item.index + item.length, html.length);
-
-            return item;
-        });
+                return item;
+            });
+        }
 
         return this.formatHTML(html);
     }

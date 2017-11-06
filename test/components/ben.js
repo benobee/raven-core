@@ -1,7 +1,7 @@
 import html from "./person.html";
-import app from "./app";
+import Raven from "../../src/core/core";
 
-const ben = app.component({
+const ben = Raven.component('person', {
 	node: "#ben",
 	html,
 	data () {
