@@ -1,6 +1,6 @@
 <div class="list-wrapper" id="{id}">
     <div class="{classNames.isActive}">{name} {age}</div>
-    <ul class="list" for="{each item in list}">
-        <li class="item">{item}</li>
+    <ul class="list" repeat="item in list">
+        <li class="{classNames.isActive}" data-type="{item.type}">{item.name}</li>
     </ul>
 </div>
