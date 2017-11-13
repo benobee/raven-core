@@ -1,24 +1,24 @@
 import morphdom from 'morphdom';
 
-class Component {
+class RavenComponent {
     constructor(componentName, options) {
+        this.el = options.el;
         this.componentName = componentName;
-        this.node = options.node;
         this.data = options.data();
         this.html = options.html;
+        this.parentAttributes = {};
+        this.ravenComponent = true;
     }
     render() {
         this.html = this.parseHTML(this.html, this.data);
 
-        // create parent div for injection
-        const div = document.createElement('div');
-
         // search for the component element by name
-        const target = document.querySelectorAll(this.componentName);
+        const target = document.querySelectorAll(this.el);
 
         // for each of the components render the html
-        target.forEach((item) => {
-            const clone = div.cloneNode();
+        target.forEach((item, index) => {
+            // create parent div for injection
+            const parentNode = document.createElement('div');
 
             // get the attriutes for the parent node and transfer
             for (let value in item.attributes) {
@@ -28,18 +28,18 @@ class Component {
                     value = item.attributes[ value ].value;
 
                     if (value) {
-                        clone.setAttribute(name, value);
+                        this.parentAttributes[ name ] = value;
                     }
                 }
             }
 
-            // set the inner html of the cloned node and
-            // inject the html
-            clone.innerHTML = this.html;
-            this.node = clone;
-            this.html = this.formatHTML(clone.outerHTML);
-            this.node = this.parseAttributes(this.node);
-            item.outerHTML = this.node.outerHTML;
+            // set the inner html of the cloned node and inject the html
+            parentNode.innerHTML = this.html;
+            this.html = this.formatHTML(parentNode.outerHTML);
+            this.parseAttributes(parentNode);
+            item.outerHTML = parentNode.innerHTML;
+            this.html = parentNode.innerHTML;
+            this.node = parentNode.children[ 0 ];
         });
     }
     parseAttributes(html) {
@@ -65,7 +65,6 @@ class Component {
                 let nodeHTML = attribute.node.children[ 0 ].outerHTML;
 
                 nodeHTML = this.parseChild(nodeHTML, listData, parse);
-
                 attribute.node.innerHTML = nodeHTML;
             }
         });
@@ -85,18 +84,21 @@ class Component {
                     itemHTML = itemHTML.replace(str, item[ prop ]);
                 }
             }
-
             HTMLArray.push(itemHTML);
         });
-
         return HTMLArray.join("");
     }
-    getResults(str, obj) {
+    findReturnableValues(str, obj) {
         let results = false;
         let search = "";
         let searchIndex = 0;
 
         while (!results) {
+            if (str[ 0 ] === "id") {
+                search = this.id;
+                results = true;
+                return search;
+            }
             search = obj = obj[ str[ searchIndex ] ];
 
             if (typeof search === "object") {
@@ -106,8 +108,8 @@ class Component {
 
                 return search;
             }
-        }
 
+        }
         return results;
     }
     parseHTML(html, data) {
@@ -127,8 +129,7 @@ class Component {
 
                     const split = item.str.split(".");
 
-                    value = this.getResults(split, data);
-
+                    value = this.findReturnableValues(split, data);
                     if (value) {
                         html = html.substr(0, item.index) + value + html.substr(item.index + item.length, html.length);
                     }
@@ -137,7 +138,6 @@ class Component {
                 });
             }
         }
-
         return this.formatHTML(html);
     }
     formatString(str) {
@@ -145,7 +145,6 @@ class Component {
             .replace(/\s{1,10}/g, '')
             .replace("{", "")
             .replace("}", "");
-
         return str;
     }
     formatHTML(str) {
@@ -155,9 +154,8 @@ class Component {
          */
 
         str = str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
-
         return str;
     }
 }
 
-export default Component;
+export default RavenComponent;

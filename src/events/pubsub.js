@@ -28,4 +28,6 @@ class PubSub {
     }
 }
 
-export default PubSub;
+const Events = new PubSub();
+
+export default Events;

@@ -1,22 +1,6 @@
 const util = {
-    _id(value, name) {
-        let userInput = "";
-
-        if (value) {
-            userInput = value;
-        }
-
-        let date = new Date();
-
-        date = date.getMilliseconds().toString();
-
-        let firstPart = (Math.random() * 46656) | 0;
-        let secondPart = (Math.random() * 46656) | 0;
-
-        firstPart = (`000${ firstPart.toString(36)}`).slice(-3);
-        secondPart = (`000${ secondPart.toString(36)}`).slice(-3);
-
-        return this.crypto(userInput, name);
+    _id(value) {
+        return this.crypto(value);
     },
     shuffle(array) {
         let currentIndex = array.length;
@@ -38,10 +22,8 @@ const util = {
 
         return array;
     },
-    crypto(value, itemName) {
-
-        value = String(String(Math.floor(value * 2)) + String(itemName.substring(0, 2)) + Number(Math.floor(value * 6)));
-        value = value.toLowerCase();
+    crypto(value) {
+        value = String(String(Math.floor(value * 2)) + Number(Math.floor(value * 3))).toLowerCase();
 
         const list = "abcdefghijklmnopqrstuvwxyz0123456789";
 
