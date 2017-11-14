@@ -1,49 +1,84 @@
 import RavenComponent from "../component/component";
-import Events from "../events/pubsub";
 import util from "../util/util";
 
 class Raven {
     constructor() {
         if (!Raven.instance) {
-            this.componentList = [];
-            Raven.instance = this;
+            this.events = {};
+            this.history = [];
+            this.components = {
+                active: [],
+                templates: []
+            };
 
-            console.log(Events);
+            this.on("appInitialized", (instance) => {
+                //set instance
+                instance.appInitialized = true;
+                Raven.instance = instance;
+            });
+
+            this.on("componentListRegistered", () => {
+                // if available components are registered they will be rendered
+                if (this.components.active.length > 0) {
+                    this.components.active.map((item, index) => {
+                        item.id = util._id(index + 1);
+                        if (item.html) {
+                            item.render();
+                        }
+                    });
+                }
+            });
         }
 
         return this;
     }
+    init(config) {
+        for (const prop in config) {
+            // look for config props
+            if (prop === "components") {
+                this.components.active = config[ prop ];
+                this.emit("componentListRegistered");
+            }
+        }
+    }
+    on(event, listener) {
+        // create the event if not yet created
+        if (!this.events[ event ]) {
+            this.events[ event ] = [];
+        }
+
+        // add the listener
+        this.events[ event ].push(listener);
+    }
+    emit(event, data) {
+        // return if the event doesn't exist, or there are no listeners
+        if (!this.events[ event ] || this.events[ event ].length < 1) {
+            return;
+        }
+
+        // send the event to all listeners
+        this.events[ event ].forEach((listener) => listener(data || {}));
+        this.history.push({ eventEmitted: event });
+    }
     component(componentName, config) {
         // Component factory method
+        config.isTemplate = false;
+
+        if (config.template && config.template !== componentName) {
+            this.components.templates[ componentName ] = config;
+            config.isTemplate = true;
+        } else if (!config.html) {
+            config.html = this.components.templates[ componentName ].template;
+        }
+
         const component = new RavenComponent(componentName, config);
 
-        this.componentList.push(component);
-
-        this.componentList.map((item, index) => {
-            item.id = util._id(index + 1, componentName);
-        });
-
-        this.render(component.el);
-
         return component;
-    }
-    helpers() {
-
-    }
-    methods() {
-
-    }
-    render() {
-        if (this.componentList.length > 0) {
-            this.componentList.forEach((item) => {
-                item.render();
-            });
-        }
     }
 }
 
 const instance = new Raven();
 
-Object.freeze(instance);
+instance.emit("appInitialized", { instance, message: { appInitialized: true } });
 
 export default instance;

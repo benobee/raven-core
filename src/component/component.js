@@ -2,14 +2,20 @@ import morphdom from 'morphdom';
 
 class RavenComponent {
     constructor(componentName, options) {
-        this.el = options.el;
         this.componentName = componentName;
-        this.data = options.data();
-        this.html = options.html;
-        this.parentAttributes = {};
-        this.ravenComponent = true;
+
+        if (!options.isTemplate) {
+            this.el = options.el;
+            this.data = options.data();
+            this.html = options.html;
+            if (options.events) {
+                this.events = options.events;
+            }
+            this.ravenComponent = true;
+        }
     }
     render() {
+        this.parentAttributes = {};
         this.html = this.parseHTML(this.html, this.data);
 
         // search for the component element by name
@@ -43,7 +49,7 @@ class RavenComponent {
         });
     }
     parseAttributes(html) {
-        const attributes = ["repeat", "bind"];
+        const attributes = ["repeat", "bind", "onclick"];
         const results = [];
 
         attributes.forEach((attr) => {
@@ -55,6 +61,18 @@ class RavenComponent {
         });
 
         results.forEach((attribute) => {
+            if (attribute.type === "onclick") {
+                /*                if (this.events) {
+                                    for (const method in this.events) {
+                                        if (method) {
+                                            const split = attribute.value.split("(");
+
+                                            console.log(attribute.value);
+                                        }
+                                    }
+                                }*/
+            }
+
             if (attribute.type === "repeat") {
                 const parse = attribute.value.split(" in ");
 

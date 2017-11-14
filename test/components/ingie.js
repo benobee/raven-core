@@ -1,20 +1,37 @@
-import Raven from "../../src/core/core";
-import html from "./person.html";
+const component = {
+    el: ".person.ingie",
+    data() {
+        return {
+            name: "Ingie",
+            age: "35",
+            classNames: {
+                isActive: "active",
+                isHidden: "hidden"
+            },
+            list: [{
+                    type: "cat",
+                    name: "Bobby Brown"
+                },
+                {
+                    type: "dog",
+                    name: "Willy Smith"
+                },
+                {
+                    type: "fish",
+                    name: "Judy Dench"
+                },
+                {
+                    type: "bird",
+                    name: "Taylor Swift"
+                }
+            ]
+        };
+    },
+    events: {
+        handleClick() {
+            console.log("handling click");
+        }
+    }
+};
 
-// const ingie = Raven.component('ben', {
-// 	node: "#ingie",
-// 	html,
-// 	data () {
-// 		return {
-// 			name: "Ingie",
-// 			age: "35",
-// 			classNames: {
-// 				isActive: "active",
-// 				isHidden: "hidden"
-// 			},
-// 			list: [1, 2, 3, 4, 5]
-// 		};
-// 	}
-// });
-
-// export default ingie;
+export default component;

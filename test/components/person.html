@@ -1,5 +1,5 @@
 <div class="list-wrapper" id="{id}">
-    <div class="{classNames.isActive}">{name} {age}</div>
+    <div class="{classNames.isActive}" onclick="handleClick({id})">{name} {age}</div>
     <ul class="list" repeat="item in list">
         <li class="{item.type}">{item.name}</li>
     </ul>

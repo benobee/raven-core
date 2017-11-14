@@ -1,12 +1,16 @@
 import Raven from "../src/core/core";
-import * as components from "./components";
+import ingie from "./components/ingie";
+import ben from "./components/ben";
+import html from "./components/person.html";
 
-Raven.helpers({
-
+Raven.component('person', {
+	template: html
 });
 
-Raven.methods({
-
+Raven.init({
+	components: [
+		Raven.component('person', ben)
+	]
 });
 
 console.log(Raven);
