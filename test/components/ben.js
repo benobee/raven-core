@@ -26,6 +26,11 @@ const component = {
                 }
             ]
         };
+    },
+    methods: {
+        handleClick() {
+            console.log("handling event:", this.id);
+        }
     }
 };
 

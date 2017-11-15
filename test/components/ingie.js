@@ -9,7 +9,7 @@ const component = {
                 isHidden: "hidden"
             },
             list: [{
-                    type: "cat",
+                    type: "pillow",
                     name: "Bobby Brown"
                 },
                 {
@@ -27,9 +27,14 @@ const component = {
             ]
         };
     },
-    events: {
-        handleClick() {
-            console.log("handling click");
+    helpers: {
+        notify() {
+            console.log("notifying");
+        }
+    },
+    methods: {
+        handleClick(value) {
+            console.log("handling event:", value);
         }
     }
 };

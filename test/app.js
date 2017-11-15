@@ -9,7 +9,8 @@ Raven.component('person', {
 
 Raven.init({
 	components: [
-		Raven.component('person', ben)
+		Raven.component('person', ben),
+		Raven.component('person', ingie)
 	]
 });
 

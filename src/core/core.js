@@ -22,7 +22,7 @@ class Raven {
                 if (this.components.active.length > 0) {
                     this.components.active.map((item, index) => {
                         item.id = util._id(index + 1);
-                        if (item.html) {
+                        if (item.node) {
                             item.render();
                         }
                     });

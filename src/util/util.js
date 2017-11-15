@@ -23,6 +23,7 @@ const util = {
         return array;
     },
     crypto(value) {
+        // take the value and return a consistent unique ID.
         value = String(Number(value) + Number(value * Math.PI).toFixed(2)).toLowerCase();
         
         const list = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -43,14 +44,11 @@ const util = {
                     if (!key[ index ]) {
                         encryptValue = "";
                     }
-
                     encrypt.push(encryptValue);
                 }
             }
         }
-
         value = encrypt.join("");
-
         return value;
     }
 };

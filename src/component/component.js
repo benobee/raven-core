@@ -7,16 +7,30 @@ class RavenComponent {
         if (!options.isTemplate) {
             this.el = options.el;
             this.data = options.data();
-            this.html = options.html;
-            if (options.events) {
-                this.events = options.events;
+            this.node = options.html;
+
+            if (options.helpers) {
+                for (const method in options.helpers) {
+                    if (method) {
+                        this[ `_${method}` ] = options.helpers[ method ];
+                    }
+                }
             }
+
+            if (options.methods) {
+                for (const method in options.methods) {
+                    if (method) {
+                        this[ `$${method}` ] = options.methods[ method ];
+                    }
+                }
+            }
+
             this.ravenComponent = true;
         }
     }
     render() {
         this.parentAttributes = {};
-        this.html = this.parseHTML(this.html, this.data);
+        this.node = this.parseHTML(this.node, this.data);
 
         // search for the component element by name
         const target = document.querySelectorAll(this.el);
@@ -24,7 +38,7 @@ class RavenComponent {
         // for each of the components render the html
         target.forEach((item, index) => {
             // create parent div for injection
-            const parentNode = document.createElement('div');
+            let parentNode = document.createElement('div');
 
             // get the attriutes for the parent node and transfer
             for (let value in item.attributes) {
@@ -40,57 +54,78 @@ class RavenComponent {
             }
 
             // set the inner html of the cloned node and inject the html
-            parentNode.innerHTML = this.html;
-            this.html = this.formatHTML(parentNode.outerHTML);
-            this.parseAttributes(parentNode);
-            item.outerHTML = parentNode.innerHTML;
-            this.html = parentNode.innerHTML;
-            this.node = parentNode.children[ 0 ];
+            parentNode.innerHTML = this.node;
+            parentNode = parentNode.children[ 0 ];
+            const itemParentNode = item.parentNode;
+
+            //looking for unique attributes to render or filter particular items
+            parentNode = this.parseAttributes(parentNode);
+            parentNode = this.bindEvents(parentNode);
+
+            this.node = parentNode;
+            delete this.el;
+
+            //replace the starting node with the newly compiled DOM component
+            itemParentNode.replaceChild(parentNode, item);
         });
     }
-    parseAttributes(html) {
-        const attributes = ["repeat", "bind", "onclick"];
+    mapAttributes(array, node) {
         const results = [];
 
-        attributes.forEach((attr) => {
-            const hasAttr = html.querySelectorAll(`[${attr}]`);
+        array.forEach((attr) => {
+            const hasAttr = node.querySelectorAll(`[${attr}]`);
 
             hasAttr.forEach((item) => {
                 results.push({ node: item, type: attr, value: item.attributes[ attr ].value });
             });
         });
 
-        results.forEach((attribute) => {
-            if (attribute.type === "onclick") {
-                /*                if (this.events) {
-                                    for (const method in this.events) {
-                                        if (method) {
-                                            const split = attribute.value.split("(");
+        return results;
+    }
+    bindEvents(parentNode) {
+        const clone = parentNode.cloneNode(true);
+        const attributes = this.mapAttributes(["click", "mouseover"], clone);
 
-                                            console.log(attribute.value);
-                                        }
-                                    }
-                                }*/
-            }
+        attributes.forEach((attribute) => {
+            const match = attribute.value.match(/ *\([^)]*\) */g, "")[ 0 ].replace("(", "").replace(")", "");
 
+            const methodName = attribute.value.replace(/ *\([^)]*\) */g, "");
+
+            attribute.node.removeAttribute(attribute.type);
+            attribute.node.addEventListener(attribute.type, (e) => {
+                this[ `$${methodName}` ](match);
+            });
+        });
+
+        return clone;
+    }
+    parseAttributes(parentNode) {
+        const clone = parentNode.cloneNode(true);
+        const attributes = this.mapAttributes(["repeat"], clone);
+
+        attributes.forEach((attribute) => {
             if (attribute.type === "repeat") {
+                //getting the list value to match with the real data
                 const parse = attribute.value.split(" in ");
 
                 const listData = this.data[ parse[ 1 ] ];
 
+                //remove the attribute from the DOM
                 attribute.node.removeAttribute(attribute.type);
 
+                //matching the string with the data and returning as real DOM node
                 let nodeHTML = attribute.node.children[ 0 ].outerHTML;
 
                 nodeHTML = this.parseChild(nodeHTML, listData, parse);
                 attribute.node.innerHTML = nodeHTML;
+                clone.appendChild(attribute.node);
             }
         });
 
-        return html;
+        return clone;
     }
     parseChild(html, listData, parse) {
-        const HTMLArray = [];
+        let HTMLArray = [];
 
         listData.forEach((item) => {
             let itemHTML = html;
@@ -99,12 +134,15 @@ class RavenComponent {
                 if (prop) {
                     const str = "{" + parse[ 0 ] + "." + prop + "}";
 
-                    itemHTML = itemHTML.replace(str, item[ prop ]);
+                    itemHTML = itemHTML.split(str).join(item[ prop ]);
                 }
             }
             HTMLArray.push(itemHTML);
         });
-        return HTMLArray.join("");
+
+        HTMLArray = HTMLArray.join("");
+
+        return HTMLArray;
     }
     findReturnableValues(str, obj) {
         let results = false;
