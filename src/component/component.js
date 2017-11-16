@@ -31,6 +31,7 @@ class RavenComponent {
     render() {
         this.parentAttributes = {};
         this.node = this.parseHTML(this.node, this.data);
+        const VDOM = document.createElement("body");
 
         // search for the component element by name
         const target = document.querySelectorAll(this.el);
@@ -38,9 +39,9 @@ class RavenComponent {
         // for each of the components render the html
         target.forEach((item, index) => {
             // create parent div for injection
-            let parentNode = document.createElement('div');
-
+            let node = document.createElement('div');
             // get the attriutes for the parent node and transfer
+
             for (let value in item.attributes) {
                 if (item.attributes) {
                     const name = item.attributes[ value ].name;
@@ -54,19 +55,24 @@ class RavenComponent {
             }
 
             // set the inner html of the cloned node and inject the html
-            parentNode.innerHTML = this.node;
-            parentNode = parentNode.children[ 0 ];
+            node.innerHTML = this.node;           
+            node = node.children[ 0 ];
+            VDOM.appendChild(node);
+
             const itemParentNode = item.parentNode;
 
-            //looking for unique attributes to render or filter particular items
-            parentNode = this.parseAttributes(parentNode);
-            parentNode = this.bindEvents(parentNode);
+            //look for unique attributes to render or filter particular items
+            node = this.parseAttributes(VDOM);
 
-            this.node = parentNode;
+            //console.log(node);
+
+            node = this.bindEvents(node);
+
+            this.node = node;
             delete this.el;
 
             //replace the starting node with the newly compiled DOM component
-            itemParentNode.replaceChild(parentNode, item);
+            itemParentNode.replaceChild(node, item);
         });
     }
     mapAttributes(array, node) {
@@ -82,9 +88,55 @@ class RavenComponent {
 
         return results;
     }
-    bindEvents(parentNode) {
-        const clone = parentNode.cloneNode(true);
-        const attributes = this.mapAttributes(["click", "mouseover"], clone);
+    bindEvents(node) {
+        const clone = node.cloneNode(true);
+
+        const attributes = this.mapAttributes([
+            "click",
+            "mouseenter",
+            "mouseleave",
+            "mouseover",
+            "mouseout",
+            "mouseover",
+            "touchstart",
+            "touchend",
+            "touchmove",
+            "submit",
+            "reset",
+            "transitionstart",
+            "transitioncancel",
+            "transitionend",
+            "transitionrun",
+            "animationstart",
+            "animationend",
+            "animationiteration",
+            "pagehide",
+            "pageshow",
+            "popstate",
+            "focus",
+            "blur",
+            "cached",
+            "error",
+            "abort",
+            "load",
+            "loadstart",
+            "beforeunload",
+            "fullscreenchange",
+            "fullscreenerror",
+            "resize",
+            "scroll",
+            "keydown",
+            "keypress",
+            "keyup",
+            "dragstart",
+            "drag",
+            "dragend",
+            "dragenter",
+            "dragover",
+            "dragleave",
+            "drop",
+            "change"
+        ], clone);
 
         attributes.forEach((attribute) => {
             const match = attribute.value.match(/ *\([^)]*\) */g, "")[ 0 ].replace("(", "").replace(")", "");
@@ -99,8 +151,8 @@ class RavenComponent {
 
         return clone;
     }
-    parseAttributes(parentNode) {
-        const clone = parentNode.cloneNode(true);
+    parseAttributes(node) {
+        const clone = node.cloneNode(true);
         const attributes = this.mapAttributes(["repeat"], clone);
 
         attributes.forEach((attribute) => {

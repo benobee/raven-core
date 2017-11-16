@@ -35,6 +35,12 @@ const component = {
     methods: {
         handleClick(value) {
             console.log("handling event:", value);
+        },
+        loadStart() {
+            console.log("loading");
+        },
+        loadEnd() {
+            console.log("load complete");
         }
     }
 };
