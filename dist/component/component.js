@@ -158,7 +158,7 @@ var RavenComponent = function () {
              * Looks through the existing event array to see if the 
              * template has any declared to be used.
              * 
-             * @param {Object} array
+             * @param {Array} array
              * @param {Object} node
              * @returns {results} any matched attributes
              */
