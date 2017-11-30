@@ -15,7 +15,7 @@ class RavenComponent {
             if (options.helpers) {
                 for (const method in options.helpers) {
                     if (method) {
-                        this[ `$${method}` ] = options.helpers[ method ];
+                        this[`$${method}`] = options.helpers[method];
                     }
                 }
             }
@@ -23,7 +23,7 @@ class RavenComponent {
             if (options.methods) {
                 for (const method in options.methods) {
                     if (method) {
-                        this[ `${method}` ] = options.methods[ method ];
+                        this[`${method}`] = options.methods[method];
                     }
                 }
             }
@@ -32,16 +32,23 @@ class RavenComponent {
         }
     }
     getParentAttributes(target) {
+        /**
+         * Parses attributes and stores them from parent node
+         *
+         * @param {Object} target any node
+         * @name getParentAttributes
+         */
+
         const props = {};
 
         for (let value in target.attributes) {
             if (target.attributes) {
-                const name = target.attributes[ value ].name;
+                const name = target.attributes[value].name;
 
-                value = target.attributes[ value ].value;
+                value = target.attributes[value].value;
 
                 if (value) {
-                    props[ name ] = value;
+                    props[name] = value;
                 }
             }
         }
@@ -49,11 +56,9 @@ class RavenComponent {
         return props;
     }
     compileHTML(target, template, data) {
-
         /**
-         * This method compiles html. It also extracts
-         * the parent attributes and stores them, parses attributes
-         * for various rendering options, and binds initial events.
+         * This method compiles html as well as executes various
+         * methods to 
          *
          * @param {Object} target any node
          * @name compileHTML 
@@ -64,28 +69,38 @@ class RavenComponent {
 
         // set the inner html of the cloned node and inject the html
         node.innerHTML = this.parseHTML(template, data);
-        node = node.children[ 0 ];
+        node = node.children[0];
 
         // look for unique attributes to render or filter particular items
         node = this.parseAttributes(node);
         node = this.bindEvents(node);
 
-        return node; 
+        return node;
     }
     render(node, target) {
         /**
          * Determines if the traget is a string selector or an actual 
          * DOM element and renders it to the DOM.
          *
+         * @param {Object} node any node
          * @param {Object} target any node
          * @name render 
          */
-        
+
         // replace the starting node with the newly compiled DOM component
         target = this.convertStringToNode(target);
         target.parentNode.replaceChild(node, target);
     }
     convertStringToNode(input) {
+        /**
+         * Determines if the traget is a string selector or an actual 
+         * DOM element and renders it to the DOM.
+         *
+         * @param {Object} input any node
+         * @returns {Object} actual DOM node
+         * @name convertStringToNode 
+         */
+
         const type = (typeof input);
 
         if (type === "string") {
@@ -95,17 +110,35 @@ class RavenComponent {
         return input;
     }
     update(props) {
+        /**
+         * Updates the rendered element using DOM diffing
+         * via morphom.
+         *
+         * @param {Object} props any new data that matches the current
+         * @name update 
+         */
+        
         Object.assign(this.data, props);
         morphdom(this.el, this.compileHTML(this.target, this.template, this.data));
     }
     mapAttributes(array, node) {
+
+        /**
+         * Looks through the existing event array to see if the 
+         * template has any declared to be used.
+         * 
+         * @param {Object} array
+         * @param {Object} node
+         * @returns {results} any matched attributes
+         */
+        
         const results = [];
 
         array.forEach((attr) => {
             const hasAttr = node.querySelectorAll(`[${attr}]`);
 
             hasAttr.forEach((item) => {
-                results.push({ node: item, type: attr, value: item.attributes[ attr ].value });
+                results.push({ node: item, type: attr, value: item.attributes[attr].value });
             });
         });
 
@@ -135,14 +168,14 @@ class RavenComponent {
             match = attribute.value.match(/ *\([^)]*\) */g, "");
 
             if (match) {
-                match = match[ 0 ].replace("(", "").replace(")", "");
+                match = match[0].replace("(", "").replace(")", "");
             }
 
             const methodName = attribute.value.replace(/ *\([^)]*\) */g, "");
 
             attribute.node.removeAttribute(attribute.type);
             attribute.node.addEventListener(attribute.type, (e) => {
-                this[ `${methodName}` ](match);
+                this[`${methodName}`](match);
             });
         });
 
@@ -159,10 +192,10 @@ class RavenComponent {
 
                 let listData = [];
 
-                if (this.data[ parse[ 1 ] ]) {
-                    listData = this.data[ parse[ 1 ] ];
+                if (this.data[parse[1]]) {
+                    listData = this.data[parse[1]];
                 } else {
-                    const list = this[ `$${parse[ 1 ]}` ];
+                    const list = this[`$${parse[ 1 ]}`];
 
                     if (list) {
                         listData = list();
@@ -173,7 +206,7 @@ class RavenComponent {
                 attribute.node.removeAttribute(attribute.type);
 
                 //matching the string with the data and returning as real DOM node
-                let nodeHTML = attribute.node.children[ 0 ].outerHTML;
+                let nodeHTML = attribute.node.children[0].outerHTML;
 
                 nodeHTML = this.parseChild(nodeHTML, listData, parse);
                 attribute.node.innerHTML = nodeHTML;
@@ -191,9 +224,9 @@ class RavenComponent {
 
             for (const prop in item) {
                 if (prop) {
-                    const str = "{" + parse[ 0 ] + "." + prop + "}";
+                    const str = "{" + parse[0] + "." + prop + "}";
 
-                    itemHTML = itemHTML.split(str).join(item[ prop ]);
+                    itemHTML = itemHTML.split(str).join(item[prop]);
                 }
             }
             HTMLArray.push(itemHTML);
@@ -209,12 +242,12 @@ class RavenComponent {
         let searchIndex = 0;
 
         while (!results) {
-            if (str[ 0 ] === "id") {
+            if (str[0] === "id") {
                 search = this.id;
                 results = true;
                 return search;
             }
-            search = obj = obj[ str[ searchIndex ] ];
+            search = obj = obj[str[searchIndex]];
 
             if (typeof search === "object") {
                 searchIndex += 1;

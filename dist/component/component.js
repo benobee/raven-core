@@ -53,6 +53,13 @@ var RavenComponent = function () {
     _createClass(RavenComponent, [{
         key: 'getParentAttributes',
         value: function getParentAttributes(target) {
+            /**
+             * Parses attributes and stores them from parent node
+             *
+             * @param {Object} target any node
+             * @name getParentAttributes
+             */
+
             var props = {};
 
             for (var value in target.attributes) {
@@ -72,11 +79,9 @@ var RavenComponent = function () {
     }, {
         key: 'compileHTML',
         value: function compileHTML(target, template, data) {
-
             /**
-             * This method compiles html. It also extracts
-             * the parent attributes and stores them, parses attributes
-             * for various rendering options, and binds initial events.
+             * This method compiles html as well as executes various
+             * methods to 
              *
              * @param {Object} target any node
              * @name compileHTML 
@@ -102,6 +107,7 @@ var RavenComponent = function () {
              * Determines if the traget is a string selector or an actual 
              * DOM element and renders it to the DOM.
              *
+             * @param {Object} node any node
              * @param {Object} target any node
              * @name render 
              */
@@ -113,6 +119,15 @@ var RavenComponent = function () {
     }, {
         key: 'convertStringToNode',
         value: function convertStringToNode(input) {
+            /**
+             * Determines if the traget is a string selector or an actual 
+             * DOM element and renders it to the DOM.
+             *
+             * @param {Object} input any node
+             * @returns {Object} actual DOM node
+             * @name convertStringToNode 
+             */
+
             var type = typeof input === 'undefined' ? 'undefined' : _typeof(input);
 
             if (type === "string") {
@@ -124,12 +139,30 @@ var RavenComponent = function () {
     }, {
         key: 'update',
         value: function update(props) {
+            /**
+             * Updates the rendered element using DOM diffing
+             * via morphom.
+             *
+             * @param {Object} props any new data that matches the current
+             * @name update 
+             */
+
             Object.assign(this.data, props);
             (0, _morphdom2.default)(this.el, this.compileHTML(this.target, this.template, this.data));
         }
     }, {
         key: 'mapAttributes',
         value: function mapAttributes(array, node) {
+
+            /**
+             * Looks through the existing event array to see if the 
+             * template has any declared to be used.
+             * 
+             * @param {Object} array
+             * @param {Object} node
+             * @returns {results} any matched attributes
+             */
+
             var results = [];
 
             array.forEach(function (attr) {
