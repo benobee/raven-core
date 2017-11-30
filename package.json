@@ -9,7 +9,7 @@
     "test": "mocha",
     "start": "webpack --progress --colors --watch",
     "watch": "./node_modules/.bin/webpack -d --watch --colors",
-    "build": "set PROD_ENV=true&&babel src -d dist",
+    "build": "set PROD_ENV=true&&babel src -d dist&&documentation build --output ./README.md --format md",
     "dev": "set PROD_ENV=false&&webpack-dev-server ./test/app.js --hot --watch --colors",
     "lint": "eslint source"
   },

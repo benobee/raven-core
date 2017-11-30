@@ -8,7 +8,20 @@ class Raven {
             this.history = [];
             this.components = {
                 active: [],
-                templates: []
+                templates: [],
+                find(props) {
+                    return util.hasProps(this.active, props);
+                },
+                findOne(props) {
+                    return util.hasProps(this.active, props)[ 0 ];
+                },
+                update(...props) {
+                    const results = util.hasProps(this.active, props[ 0 ]);
+
+                    results.forEach((item) => {
+                        item.update(props[ 1 ]);
+                    });
+                }
             };
 
             this.on("appInitialized", (instance) => {
@@ -22,8 +35,8 @@ class Raven {
                 if (this.components.active.length > 0) {
                     this.components.active.map((item, index) => {
                         item.id = util._id(index + 1);
-                        if (item.node) {
-                            item.render();
+                        if (item.el) {
+                            item.render(item.el, item.target);
                         }
                     });
                 }

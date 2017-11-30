@@ -1,9 +1,9 @@
 const component = {
-    el: ".person.ingie",
+    el: ".ingie",
     data() {
         return {
             name: "Ingie",
-            age: "35",
+            age: "39",
             classNames: {
                 isActive: "active",
                 isHidden: "hidden"
@@ -27,20 +27,12 @@ const component = {
             ]
         };
     },
-    helpers: {
-        notify() {
-            console.log("notifying");
-        }
-    },
     methods: {
-        handleClick(value) {
-            console.log("handling event:", value);
+        handleClick(prop) {
+            this.notify(prop);
         },
-        loadStart() {
-            console.log("loading");
-        },
-        loadEnd() {
-            console.log("load complete");
+        notify(message) {
+            console.log("notifying: ", message);
         }
     }
 };

@@ -5,14 +5,17 @@ class RavenComponent {
         this.componentName = componentName;
 
         if (!options.isTemplate) {
-            this.el = options.el;
+            this.target = options.el;
             this.data = options.data();
-            this.node = options.html;
+            this.template = options.html;
+            this.el = this.compileHTML(this.convertStringToNode(options.el), this.template, this.data);
+            // get the attriutes for the parent node and transfer
+            this.props = this.getParentAttributes(options.el);
 
             if (options.helpers) {
                 for (const method in options.helpers) {
                     if (method) {
-                        this[ `_${method}` ] = options.helpers[ method ];
+                        this[ `$${method}` ] = options.helpers[ method ];
                     }
                 }
             }
@@ -20,7 +23,7 @@ class RavenComponent {
             if (options.methods) {
                 for (const method in options.methods) {
                     if (method) {
-                        this[ `$${method}` ] = options.methods[ method ];
+                        this[ `${method}` ] = options.methods[ method ];
                     }
                 }
             }
@@ -28,52 +31,72 @@ class RavenComponent {
             this.ravenComponent = true;
         }
     }
-    render() {
-        this.parentAttributes = {};
-        this.node = this.parseHTML(this.node, this.data);
-        const VDOM = document.createElement("body");
+    getParentAttributes(target) {
+        const props = {};
 
-        // search for the component element by name
-        const target = document.querySelectorAll(this.el);
+        for (let value in target.attributes) {
+            if (target.attributes) {
+                const name = target.attributes[ value ].name;
 
-        // for each of the components render the html
-        target.forEach((item, index) => {
-            // create parent div for injection
-            let node = document.createElement('div');
-            // get the attriutes for the parent node and transfer
+                value = target.attributes[ value ].value;
 
-            for (let value in item.attributes) {
-                if (item.attributes) {
-                    const name = item.attributes[ value ].name;
-
-                    value = item.attributes[ value ].value;
-
-                    if (value) {
-                        this.parentAttributes[ name ] = value;
-                    }
+                if (value) {
+                    props[ name ] = value;
                 }
             }
+        }
 
-            // set the inner html of the cloned node and inject the html
-            node.innerHTML = this.node;           
-            node = node.children[ 0 ];
-            VDOM.appendChild(node);
+        return props;
+    }
+    compileHTML(target, template, data) {
 
-            const itemParentNode = item.parentNode;
+        /**
+         * This method compiles html. It also extracts
+         * the parent attributes and stores them, parses attributes
+         * for various rendering options, and binds initial events.
+         *
+         * @param {Object} target any node
+         * @name compileHTML 
+         */
 
-            //look for unique attributes to render or filter particular items
-            node = this.parseAttributes(VDOM);
+        // create parent div for injection
+        let node = document.createElement('div');
 
-            //console.log(node);
+        // set the inner html of the cloned node and inject the html
+        node.innerHTML = this.parseHTML(template, data);
+        node = node.children[ 0 ];
 
-            node = this.bindEvents(node);
+        // look for unique attributes to render or filter particular items
+        node = this.parseAttributes(node);
+        node = this.bindEvents(node);
 
-            this.node = node;
-            delete this.el;
+        return node; 
+    }
+    render(node, target) {
+        /**
+         * Determines if the traget is a string selector or an actual 
+         * DOM element and renders it to the DOM.
+         *
+         * @param {Object} target any node
+         * @name render 
+         */
+        
+        // replace the starting node with the newly compiled DOM component
+        target = this.convertStringToNode(target);
+        target.parentNode.replaceChild(node, target);
+    }
+    convertStringToNode(input) {
+        const type = (typeof input);
 
-            //replace the starting node with the newly compiled DOM component
-            itemParentNode.replaceChild(node, item);
-        });
+        if (type === "string") {
+            input = document.querySelector(input);
+        }
+
+        return input;
+    }
+    update(props) {
+        Object.assign(this.data, props);
+        morphdom(this.el, this.compileHTML(this.target, this.template, this.data));
     }
     mapAttributes(array, node) {
         const results = [];
@@ -98,54 +121,28 @@ class RavenComponent {
             "mouseover",
             "mouseout",
             "mouseover",
-            "touchstart",
-            "touchend",
-            "touchmove",
             "submit",
-            "reset",
             "transitionstart",
-            "transitioncancel",
             "transitionend",
-            "transitionrun",
-            "animationstart",
-            "animationend",
             "animationiteration",
-            "pagehide",
-            "pageshow",
-            "popstate",
             "focus",
-            "blur",
-            "cached",
-            "error",
-            "abort",
-            "load",
-            "loadstart",
-            "beforeunload",
-            "fullscreenchange",
-            "fullscreenerror",
-            "resize",
-            "scroll",
-            "keydown",
-            "keypress",
-            "keyup",
-            "dragstart",
-            "drag",
-            "dragend",
-            "dragenter",
-            "dragover",
-            "dragleave",
-            "drop",
             "change"
         ], clone);
 
         attributes.forEach((attribute) => {
-            const match = attribute.value.match(/ *\([^)]*\) */g, "")[ 0 ].replace("(", "").replace(")", "");
+            let match = null;
+
+            match = attribute.value.match(/ *\([^)]*\) */g, "");
+
+            if (match) {
+                match = match[ 0 ].replace("(", "").replace(")", "");
+            }
 
             const methodName = attribute.value.replace(/ *\([^)]*\) */g, "");
 
             attribute.node.removeAttribute(attribute.type);
             attribute.node.addEventListener(attribute.type, (e) => {
-                this[ `$${methodName}` ](match);
+                this[ `${methodName}` ](match);
             });
         });
 
@@ -160,7 +157,17 @@ class RavenComponent {
                 //getting the list value to match with the real data
                 const parse = attribute.value.split(" in ");
 
-                const listData = this.data[ parse[ 1 ] ];
+                let listData = [];
+
+                if (this.data[ parse[ 1 ] ]) {
+                    listData = this.data[ parse[ 1 ] ];
+                } else {
+                    const list = this[ `$${parse[ 1 ]}` ];
+
+                    if (list) {
+                        listData = list();
+                    }
+                }
 
                 //remove the attribute from the DOM
                 attribute.node.removeAttribute(attribute.type);
@@ -232,16 +239,15 @@ class RavenComponent {
                         index: html.indexOf(item),
                         length: item.length
                     };
+                    const split = item.str.split(".");
 
                     let value = "";
 
-                    const split = item.str.split(".");
-
                     value = this.findReturnableValues(split, data);
+
                     if (value) {
                         html = html.substr(0, item.index) + value + html.substr(item.index + item.length, html.length);
                     }
-
                     return item;
                 });
             }
@@ -249,11 +255,7 @@ class RavenComponent {
         return this.formatHTML(html);
     }
     formatString(str) {
-        str = str.replace(/[\n\r]+/g, '')
-            .replace(/\s{1,10}/g, '')
-            .replace("{", "")
-            .replace("}", "");
-        return str;
+        return str.replace(/[\n\r{}\s{1,10}]+/g, '');
     }
     formatHTML(str) {
 

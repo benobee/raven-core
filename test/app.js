@@ -9,9 +9,14 @@ Raven.component('person', {
 
 Raven.init({
 	components: [
-		Raven.component('person', ben),
-		Raven.component('person', ingie)
+		Raven.component('person', ben)
 	]
 });
 
 console.log(Raven);
+
+let count = 39;
+
+setInterval(() => {
+	Raven.components.update({ id: "62jfg3am62jfkaj8" }, { age: count++ } );
+}, 500);
