@@ -17,6 +17,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var RavenComponent = function () {
+    // class constructor method
     function RavenComponent(componentName, options) {
         _classCallCheck(this, RavenComponent);
 
@@ -30,17 +31,18 @@ var RavenComponent = function () {
         }
     }
 
+    /**
+     * All methods and variables from the initial options 
+     * will be exceuted and stored accordingly. Making this
+     * separate method of readability. 
+     * 
+     * @param {Object} options for the component
+     * @private
+     */
+
     _createClass(RavenComponent, [{
         key: 'executeComponent',
         value: function executeComponent(options) {
-            /**
-             * All methods and variables from the initial options 
-             * will be exceuted and stored accordingly. Making this
-             * separate method of readability. 
-             * 
-             * @param {Object} options for the component
-             * @private
-             */
             this.target = options.el;
             this.data = options.data();
             this.template = options.html;
@@ -67,14 +69,17 @@ var RavenComponent = function () {
 
             this.ravenComponent = true;
         }
+
+        /**
+         * Parses attributes and stores them from parent node
+         * @param {Object} target any node
+         * @private
+         */
+
     }, {
         key: 'getParentAttributes',
         value: function getParentAttributes(target) {
-            /**
-             * Parses attributes and stores them from parent node
-             * @param {Object} target any node
-             * @private
-             */
+
             var props = {};
 
             for (var value in target.attributes) {
@@ -91,18 +96,19 @@ var RavenComponent = function () {
 
             return props;
         }
+
+        /**
+         * This method compiles html as well as executes various
+         * methods to 
+         *
+         * @param {HTMLHtmlElement} target any node
+         * @returns {HTMLHtmlElement} node
+         * @private
+         */
+
     }, {
         key: 'compileHTML',
         value: function compileHTML(target, template, data) {
-            /**
-             * This method compiles html as well as executes various
-             * methods to 
-             *
-             * @param {HTMLHtmlElement} target any node
-             * @returns {HTMLHtmlElement} node
-             * @private
-             */
-
             // create parent div for injection
             var node = document.createElement('div');
 
@@ -116,33 +122,36 @@ var RavenComponent = function () {
 
             return node;
         }
+
+        /**
+         * Determines if the traget is a string selector or an actual 
+         * DOM element and renders it to the DOM.
+         *
+         * @param {HTMLHtmlElement} node
+         * @param {HTMLHtmlElement} target
+         * @private
+         */
+
     }, {
         key: 'render',
         value: function render(node, target) {
-            /**
-             * Determines if the traget is a string selector or an actual 
-             * DOM element and renders it to the DOM.
-             *
-             * @param {HTMLHtmlElement} node
-             * @param {HTMLHtmlElement} target
-             * @private
-             */
-
             // replace the starting node with the newly compiled DOM component
             target = this.convertStringToNode(target);
             target.parentNode.replaceChild(node, target);
         }
+
+        /**
+         * Determines if the traget is a string selector or an actual 
+         * DOM element and renders it to the DOM.
+         *
+         * @param {HTMLHtmlElement} input
+         * @returns {HTMLHtmlElement} input
+         * @private
+         */
+
     }, {
         key: 'convertStringToNode',
         value: function convertStringToNode(input) {
-            /**
-             * Determines if the traget is a string selector or an actual 
-             * DOM element and renders it to the DOM.
-             *
-             * @param {HTMLHtmlElement} input
-             * @returns {HTMLHtmlElement} input
-             * @private
-             */
 
             var type = typeof input === 'undefined' ? 'undefined' : _typeof(input);
 
@@ -152,34 +161,35 @@ var RavenComponent = function () {
 
             return input;
         }
+
+        /**
+         * Updates the rendered element using DOM diffing
+         * via morphom.
+         *
+         * @param {Object} props any new data that matches the current
+         * @private
+         */
+
     }, {
         key: 'update',
         value: function update(props) {
-            /**
-             * Updates the rendered element using DOM diffing
-             * via morphom.
-             *
-             * @param {Object} props any new data that matches the current
-             * @private
-             */
-
             Object.assign(this.data, props);
             (0, _morphdom2.default)(this.el, this.compileHTML(this.target, this.template, this.data));
         }
+
+        /**
+         * Looks through the existing event array to see if the 
+         * template has any declared to be used.
+         * 
+         * @param {Array} array
+         * @param {HTMLHtmlElement} node
+         * @returns {results} any matched attributes
+         * @private
+         */
+
     }, {
         key: 'mapAttributes',
         value: function mapAttributes(array, node) {
-
-            /**
-             * Looks through the existing event array to see if the 
-             * template has any declared to be used.
-             * 
-             * @param {Array} array
-             * @param {HTMLHtmlElement} node
-             * @returns {results} any matched attributes
-             * @private
-             */
-
             var results = [];
 
             array.forEach(function (attr) {
@@ -192,19 +202,20 @@ var RavenComponent = function () {
 
             return results;
         }
+
+        /**
+         * All available events will be stored in this attributes
+         * array for use in the component. More will be added over
+         * time after testing.
+         * 
+         * @param {HTMLHtmlElement} node
+         * @private
+         */
+
     }, {
         key: 'bindEvents',
         value: function bindEvents(node) {
             var _this = this;
-
-            /**
-             * All available events will be stored in this attributes
-             * array for use in the component. More will be added over
-             * time after testing.
-             * 
-             * @param {HTMLHtmlElement} node
-             * @private
-             */
 
             var clone = node.cloneNode(true);
 
@@ -229,20 +240,21 @@ var RavenComponent = function () {
 
             return clone;
         }
+
+        /**
+         * This is for custom attributes in the component such as "repeat".
+         * The method will search for the specified attribute and execute.
+         * The reason is to provide a short hand way for custom functionality.
+         * 
+         * @param {HTMLHtmlElement} node
+         * @returns {HTMLHtmlElement} clone
+         * @private
+         */
+
     }, {
         key: 'parseAttributes',
         value: function parseAttributes(node) {
             var _this2 = this;
-
-            /**
-             * This is for custom attributes in the component such as "repeat".
-             * The method will search for the specified attribute and execute.
-             * The reason is to provide a short hand way for custom functionality.
-             * 
-             * @param {HTMLHtmlElement} node
-             * @returns {HTMLHtmlElement} clone
-             * @private
-             */
 
             var clone = node.cloneNode(true);
             var attributes = this.mapAttributes(["repeat"], clone);
@@ -278,22 +290,22 @@ var RavenComponent = function () {
 
             return clone;
         }
+
+        /**
+         * For generating lists, one child component is used as a
+         * template to genearte all the other children with all their
+         * own unqiue data points.
+         * 
+         * @param {String} html
+         * @param {Array} listData
+         * @param {String} parse
+         * @returns {Array} HTMLArray
+         * @private
+         */
+
     }, {
         key: 'parseChild',
         value: function parseChild(html, listData, parse) {
-
-            /**
-             * For generating lists, one child component is used as a
-             * template to genearte all the other children with all their
-             * own unqiue data points.
-             * 
-             * @param {String} html
-             * @param {Array} listData
-             * @param {String} parse
-             * @returns {Array} HTMLArray
-             * @private
-             */
-
             var HTMLArray = [];
 
             listData.forEach(function (item) {
@@ -313,19 +325,20 @@ var RavenComponent = function () {
 
             return HTMLArray;
         }
+
+        /**
+         * To match the string brackets with the data we will need
+         * to iterate through the object to find returnable values.
+         * 
+         * @param {String} str
+         * @param {Object} obj
+         * @returns {String} search
+         * @private
+         */
+
     }, {
         key: 'findReturnableValues',
         value: function findReturnableValues(str, obj) {
-            /**
-             * To match the string brackets with the data we will need
-             * to iterate through the object to find returnable values.
-             * 
-             * @param {String} str
-             * @param {Object} obj
-             * @returns {String} search
-             * @private
-             */
-
             var results = false;
             var search = "";
             var searchIndex = 0;
@@ -348,18 +361,19 @@ var RavenComponent = function () {
             }
             return results;
         }
+
+        /**
+         * Search for variables inside brackets
+         * 
+         * @param  {String} html && {Object} data object literal data structure
+         * @returns {String} Returns the compiled and formatted HTML based on the data
+         * @private
+         */
+
     }, {
         key: 'parseHTML',
         value: function parseHTML(html, data) {
             var _this3 = this;
-
-            /**
-             * Search for variables inside brackets
-             * 
-             * @param  {String} html && {Object} data object literal data structure
-             * @returns {String} Returns the compiled and formatted HTML based on the data
-             * @private
-             */
 
             if (html && data) {
 
@@ -387,27 +401,29 @@ var RavenComponent = function () {
             }
             return this.formatHTML(html);
         }
+
+        /**
+         * @param {String} str
+         * @returns {String} returns formatted string
+         * @private
+         */
+
     }, {
         key: 'formatString',
         value: function formatString(str) {
-            /**
-             * @param {String} str
-             * @returns {String} returns formatted string
-             * @private
-             */
-
             return str.replace(/[\n\r{}\s{1,10}]+/g, '');
         }
+
+        /**
+         * remove all whitespace, tabs and return lines from string
+         * @param {String} str any string
+         * @returns formatted HTML
+         * @private
+         */
+
     }, {
         key: 'formatHTML',
         value: function formatHTML(str) {
-            /**
-             * remove all whitespace, tabs and return lines from string
-             * @param {String} str any string
-             * @returns formatted HTML
-             * @private
-             */
-
             return str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
         }
     }]);

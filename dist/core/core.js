@@ -20,11 +20,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Raven = function () {
     function Raven() {
-        var _this = this;
-
         _classCallCheck(this, Raven);
 
         if (!Raven.instance) {
+            this.executeInstance();
+        }
+
+        return this;
+    }
+
+    /**
+     * Separated from constructor for readability. Sets up properties and
+     * methods for core functionality. Event subscriptions are created.
+     * 
+     * @private
+     */
+
+    _createClass(Raven, [{
+        key: "executeInstance",
+        value: function executeInstance() {
+            var _this = this;
+
             this.events = {};
             this.history = [];
             this.components = {
@@ -68,10 +84,14 @@ var Raven = function () {
             });
         }
 
-        return this;
-    }
+        /**
+         * The initialization options for the core instance.
+         * @param  {Object} config the perfect place for registering components
+         * 
+         * @private
+         */
 
-    _createClass(Raven, [{
+    }, {
         key: "init",
         value: function init(config) {
             for (var prop in config) {
@@ -82,6 +102,16 @@ var Raven = function () {
                 }
             }
         }
+
+        /**
+         * PUB/SUB Pattern. Topic listener that triggers a callback when the 
+         * particular topic is published.
+         * 
+         * @param  {String} event
+         * @param  {Object} listener
+         * @name Raven.on
+         */
+
     }, {
         key: "on",
         value: function on(event, listener) {
@@ -93,6 +123,14 @@ var Raven = function () {
             // add the listener
             this.events[event].push(listener);
         }
+
+        /**
+         * PUB/SUB Pattern.
+         * @param  {String} event
+         * @param  {Object} data
+         * @name Raven.emit
+         */
+
     }, {
         key: "emit",
         value: function emit(event, data) {
@@ -107,31 +145,32 @@ var Raven = function () {
             });
             this.history.push({ eventEmitted: event });
         }
+
+        /**
+         * Component factory method
+         * @param  {String} componentName Component name
+         * @param  {Object} config        Component configurations
+         * @name Raven.component
+         * @return {Object}               The custom component
+         * @example 
+         *     Raven.component("Button", {
+         *         el: ".button", 
+         *         data() {  
+         *             return {
+         *                 buttonName: 'button-click'
+         *             }
+         *         },
+         *         methods: {
+         *             buttonClick() {
+         *                 alert("CLICKED");
+         *             }
+         *         }
+         *     });
+         */
+
     }, {
         key: "component",
         value: function component(componentName, config) {
-            /**
-             * Component factory method
-             * @param  {String} componentName Component name
-             * @param  {Object} config        Component configurations
-             * @name Raven.component
-             * @return {Object}               The custom component
-             * @example 
-             *     Raven.component("Button", {
-             *         el: ".button", 
-             *         data() {  
-             *             return {
-             *                 buttonName: 'button-click'
-             *             }
-             *         },
-             *         methods: {
-             *             buttonClick() {
-             *                 alert("CLICKED");
-             *             }
-             *         }
-             *     });
-             */
-
             config.isTemplate = false;
 
             if (config.template && config.template !== componentName) {

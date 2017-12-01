@@ -1,6 +1,7 @@
 import morphdom from 'morphdom';
 
 class RavenComponent {
+    // class constructor method
     constructor(componentName, options) {
         this.componentName = componentName;
 
@@ -11,15 +12,18 @@ class RavenComponent {
             this.executeComponent(options);
         }
     }
+
+
+    /**
+     * All methods and variables from the initial options 
+     * will be exceuted and stored accordingly. Making this
+     * separate method of readability. 
+     * 
+     * @param {Object} options for the component
+     * @private
+     */
+
     executeComponent(options) {
-        /**
-         * All methods and variables from the initial options 
-         * will be exceuted and stored accordingly. Making this
-         * separate method of readability. 
-         * 
-         * @param {Object} options for the component
-         * @private
-         */
         this.target = options.el;
         this.data = options.data();
         this.template = options.html;
@@ -46,12 +50,16 @@ class RavenComponent {
 
         this.ravenComponent = true;
     }
+
+
+    /**
+     * Parses attributes and stores them from parent node
+     * @param {Object} target any node
+     * @private
+     */
+
     getParentAttributes(target) {
-        /**
-         * Parses attributes and stores them from parent node
-         * @param {Object} target any node
-         * @private
-         */
+
         const props = {};
 
         for (let value in target.attributes) {
@@ -68,16 +76,18 @@ class RavenComponent {
 
         return props;
     }
-    compileHTML(target, template, data) {
-        /**
-         * This method compiles html as well as executes various
-         * methods to 
-         *
-         * @param {HTMLHtmlElement} target any node
-         * @returns {HTMLHtmlElement} node
-         * @private
-         */
 
+
+    /**
+     * This method compiles html as well as executes various
+     * methods to 
+     *
+     * @param {HTMLHtmlElement} target any node
+     * @returns {HTMLHtmlElement} node
+     * @private
+     */
+
+    compileHTML(target, template, data) {
         // create parent div for injection
         let node = document.createElement('div');
 
@@ -91,29 +101,35 @@ class RavenComponent {
 
         return node;
     }
-    render(node, target) {
-        /**
-         * Determines if the traget is a string selector or an actual 
-         * DOM element and renders it to the DOM.
-         *
-         * @param {HTMLHtmlElement} node
-         * @param {HTMLHtmlElement} target
-         * @private
-         */
 
+
+    /**
+     * Determines if the traget is a string selector or an actual 
+     * DOM element and renders it to the DOM.
+     *
+     * @param {HTMLHtmlElement} node
+     * @param {HTMLHtmlElement} target
+     * @private
+     */
+
+    render(node, target) {
         // replace the starting node with the newly compiled DOM component
         target = this.convertStringToNode(target);
         target.parentNode.replaceChild(node, target);
     }
+
+
+    /**
+     * Determines if the traget is a string selector or an actual 
+     * DOM element and renders it to the DOM.
+     *
+     * @param {HTMLHtmlElement} input
+     * @returns {HTMLHtmlElement} input
+     * @private
+     */
+
     convertStringToNode(input) {
-        /**
-         * Determines if the traget is a string selector or an actual 
-         * DOM element and renders it to the DOM.
-         *
-         * @param {HTMLHtmlElement} input
-         * @returns {HTMLHtmlElement} input
-         * @private
-         */
+
 
         const type = (typeof input);
 
@@ -123,30 +139,31 @@ class RavenComponent {
 
         return input;
     }
-    update(props) {
-        /**
-         * Updates the rendered element using DOM diffing
-         * via morphom.
-         *
-         * @param {Object} props any new data that matches the current
-         * @private
-         */
 
+    /**
+     * Updates the rendered element using DOM diffing
+     * via morphom.
+     *
+     * @param {Object} props any new data that matches the current
+     * @private
+     */
+
+    update(props) {
         Object.assign(this.data, props);
         morphdom(this.el, this.compileHTML(this.target, this.template, this.data));
     }
+
+    /**
+     * Looks through the existing event array to see if the 
+     * template has any declared to be used.
+     * 
+     * @param {Array} array
+     * @param {HTMLHtmlElement} node
+     * @returns {results} any matched attributes
+     * @private
+     */
+
     mapAttributes(array, node) {
-
-        /**
-         * Looks through the existing event array to see if the 
-         * template has any declared to be used.
-         * 
-         * @param {Array} array
-         * @param {HTMLHtmlElement} node
-         * @returns {results} any matched attributes
-         * @private
-         */
-
         const results = [];
 
         array.forEach((attr) => {
@@ -159,17 +176,18 @@ class RavenComponent {
 
         return results;
     }
+
+
+    /**
+     * All available events will be stored in this attributes
+     * array for use in the component. More will be added over
+     * time after testing.
+     * 
+     * @param {HTMLHtmlElement} node
+     * @private
+     */
+
     bindEvents(node) {
-
-        /**
-         * All available events will be stored in this attributes
-         * array for use in the component. More will be added over
-         * time after testing.
-         * 
-         * @param {HTMLHtmlElement} node
-         * @private
-         */
-
         const clone = node.cloneNode(true);
 
         const attributes = this.mapAttributes([
@@ -206,17 +224,19 @@ class RavenComponent {
 
         return clone;
     }
-    parseAttributes(node) {
-        /**
-         * This is for custom attributes in the component such as "repeat".
-         * The method will search for the specified attribute and execute.
-         * The reason is to provide a short hand way for custom functionality.
-         * 
-         * @param {HTMLHtmlElement} node
-         * @returns {HTMLHtmlElement} clone
-         * @private
-         */
 
+
+    /**
+     * This is for custom attributes in the component such as "repeat".
+     * The method will search for the specified attribute and execute.
+     * The reason is to provide a short hand way for custom functionality.
+     * 
+     * @param {HTMLHtmlElement} node
+     * @returns {HTMLHtmlElement} clone
+     * @private
+     */
+
+    parseAttributes(node) {
         const clone = node.cloneNode(true);
         const attributes = this.mapAttributes(["repeat"], clone);
 
@@ -251,20 +271,21 @@ class RavenComponent {
 
         return clone;
     }
+
+
+    /**
+     * For generating lists, one child component is used as a
+     * template to genearte all the other children with all their
+     * own unqiue data points.
+     * 
+     * @param {String} html
+     * @param {Array} listData
+     * @param {String} parse
+     * @returns {Array} HTMLArray
+     * @private
+     */
+
     parseChild(html, listData, parse) {
-
-        /**
-         * For generating lists, one child component is used as a
-         * template to genearte all the other children with all their
-         * own unqiue data points.
-         * 
-         * @param {String} html
-         * @param {Array} listData
-         * @param {String} parse
-         * @returns {Array} HTMLArray
-         * @private
-         */
-
         let HTMLArray = [];
 
         listData.forEach((item) => {
@@ -284,17 +305,19 @@ class RavenComponent {
 
         return HTMLArray;
     }
-    findReturnableValues(str, obj) {
-        /**
-         * To match the string brackets with the data we will need
-         * to iterate through the object to find returnable values.
-         * 
-         * @param {String} str
-         * @param {Object} obj
-         * @returns {String} search
-         * @private
-         */
 
+
+    /**
+     * To match the string brackets with the data we will need
+     * to iterate through the object to find returnable values.
+     * 
+     * @param {String} str
+     * @param {Object} obj
+     * @returns {String} search
+     * @private
+     */
+
+    findReturnableValues(str, obj) {
         let results = false;
         let search = "";
         let searchIndex = 0;
@@ -318,15 +341,17 @@ class RavenComponent {
         }
         return results;
     }
-    parseHTML(html, data) {
-        /**
-         * Search for variables inside brackets
-         * 
-         * @param  {String} html && {Object} data object literal data structure
-         * @returns {String} Returns the compiled and formatted HTML based on the data
-         * @private
-         */
 
+
+    /**
+     * Search for variables inside brackets
+     * 
+     * @param  {String} html && {Object} data object literal data structure
+     * @returns {String} Returns the compiled and formatted HTML based on the data
+     * @private
+     */
+
+    parseHTML(html, data) {
         if (html && data) {
 
             let matches = html.match(/{[^}]*}/g);
@@ -353,23 +378,27 @@ class RavenComponent {
         }
         return this.formatHTML(html);
     }
-    formatString(str) {
-        /**
-         * @param {String} str
-         * @returns {String} returns formatted string
-         * @private
-         */
 
+
+    /**
+     * @param {String} str
+     * @returns {String} returns formatted string
+     * @private
+     */
+
+    formatString(str) {
         return str.replace(/[\n\r{}\s{1,10}]+/g, '');
     }
-    formatHTML(str) {
-        /**
-         * remove all whitespace, tabs and return lines from string
-         * @param {String} str any string
-         * @returns formatted HTML
-         * @private
-         */
 
+
+    /**
+     * remove all whitespace, tabs and return lines from string
+     * @param {String} str any string
+     * @returns formatted HTML
+     * @private
+     */
+    
+    formatHTML(str) {
         return str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
     }
 }
