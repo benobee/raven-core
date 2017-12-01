@@ -22,11 +22,32 @@ var RavenComponent = function () {
 
         this.componentName = componentName;
 
+        // check if the component is a template or not 
+        // if not, the regular component will be executed
+
         if (!options.isTemplate) {
+            this.executeComponent(options);
+        }
+    }
+
+    _createClass(RavenComponent, [{
+        key: 'executeComponent',
+        value: function executeComponent(options) {
+
+            /**
+             * All methods and variables from the initial options 
+             * will be exceuted and stored accordingly. Making this
+             * separate method of readability. 
+             * 
+             * @param {Object} options for the component
+             * @name component.executeComponent
+             */
+
             this.target = options.el;
             this.data = options.data();
             this.template = options.html;
             this.el = this.compileHTML(this.convertStringToNode(options.el), this.template, this.data);
+
             // get the attriutes for the parent node and transfer
             this.props = this.getParentAttributes(options.el);
 
@@ -48,16 +69,14 @@ var RavenComponent = function () {
 
             this.ravenComponent = true;
         }
-    }
-
-    _createClass(RavenComponent, [{
+    }, {
         key: 'getParentAttributes',
         value: function getParentAttributes(target) {
             /**
              * Parses attributes and stores them from parent node
              *
              * @param {Object} target any node
-             * @name getParentAttributes
+             * @name component.getParentAttributes
              */
 
             var props = {};
@@ -83,8 +102,9 @@ var RavenComponent = function () {
              * This method compiles html as well as executes various
              * methods to 
              *
-             * @param {Object} target any node
-             * @name compileHTML 
+             * @param {HTMLHtmlElement} target any node
+             * @name component.compileHTML
+             * @returns {HTMLHtmlElement} node
              */
 
             // create parent div for injection
@@ -107,9 +127,9 @@ var RavenComponent = function () {
              * Determines if the traget is a string selector or an actual 
              * DOM element and renders it to the DOM.
              *
-             * @param {Object} node any node
-             * @param {Object} target any node
-             * @name render 
+             * @param {HTMLHtmlElement} node
+             * @param {HTMLHtmlElement} target
+             * @name component.render 
              */
 
             // replace the starting node with the newly compiled DOM component
@@ -123,9 +143,9 @@ var RavenComponent = function () {
              * Determines if the traget is a string selector or an actual 
              * DOM element and renders it to the DOM.
              *
-             * @param {Object} input any node
-             * @returns {Object} actual DOM node
-             * @name convertStringToNode 
+             * @param {HTMLHtmlElement} input
+             * @returns {HTMLHtmlElement} input
+             * @name component.convertStringToNode
              */
 
             var type = typeof input === 'undefined' ? 'undefined' : _typeof(input);
@@ -144,7 +164,7 @@ var RavenComponent = function () {
              * via morphom.
              *
              * @param {Object} props any new data that matches the current
-             * @name update 
+             * @name component.update 
              */
 
             Object.assign(this.data, props);
@@ -159,7 +179,8 @@ var RavenComponent = function () {
              * template has any declared to be used.
              * 
              * @param {Array} array
-             * @param {Object} node
+             * @param {HTMLHtmlElement} node
+             * @name component.MapAttributes
              * @returns {results} any matched attributes
              */
 
@@ -179,6 +200,15 @@ var RavenComponent = function () {
         key: 'bindEvents',
         value: function bindEvents(node) {
             var _this = this;
+
+            /**
+             * All available events will be stored in this attributes
+             * array for use in the component. More will be added over
+             * time after testing.
+             * 
+             * @param {HTMLHtmlElement} node
+             * @name component.bindEvents
+             */
 
             var clone = node.cloneNode(true);
 
@@ -207,6 +237,16 @@ var RavenComponent = function () {
         key: 'parseAttributes',
         value: function parseAttributes(node) {
             var _this2 = this;
+
+            /**
+             * This is for custom attributes in the component such as "repeat".
+             * The method will search for the specified attribute and execute.
+             * The reason is to provide a short hand way for custom functionality.
+             * 
+             * @param {HTMLHtmlElement} node
+             * @name component.parseAttributes
+             * @returns {HTMLHtmlElement} clone
+             */
 
             var clone = node.cloneNode(true);
             var attributes = this.mapAttributes(["repeat"], clone);
@@ -245,6 +285,19 @@ var RavenComponent = function () {
     }, {
         key: 'parseChild',
         value: function parseChild(html, listData, parse) {
+
+            /**
+             * For generating lists, one child component is used as a
+             * template to genearte all the other children with all their
+             * own unqiue data points.
+             * 
+             * @param {String} html
+             * @param {Array} listData
+             * @param {String} parse
+             * @name component.parseChild
+             * @returns {Array} HTMLArray
+             */
+
             var HTMLArray = [];
 
             listData.forEach(function (item) {
@@ -267,6 +320,16 @@ var RavenComponent = function () {
     }, {
         key: 'findReturnableValues',
         value: function findReturnableValues(str, obj) {
+            /**
+             * To match the string brackets with the data we will need
+             * to iterate through the object to find returnable values.
+             * 
+             * @param {String} str
+             * @param {Object} obj
+             * @name component.findReturnableValues
+             * @returns {String} search
+             */
+
             var results = false;
             var search = "";
             var searchIndex = 0;
@@ -294,8 +357,16 @@ var RavenComponent = function () {
         value: function parseHTML(html, data) {
             var _this3 = this;
 
+            /**
+             * Search for variables inside brackets
+             * 
+             * @param  {String} html && {Object} data object literal data structure
+             * @returns {String} Returns the compiled and formatted HTML based on the data
+             * @name component.parseHTML
+             */
+
             if (html && data) {
-                // search for variables inside brackets
+
                 var matches = html.match(/{[^}]*}/g);
 
                 if (matches) {
@@ -323,18 +394,25 @@ var RavenComponent = function () {
     }, {
         key: 'formatString',
         value: function formatString(str) {
+            /**
+             * @param {String} str
+             * @name component.formatString
+             * @returns {String} returns formatted string
+             */
+
             return str.replace(/[\n\r{}\s{1,10}]+/g, '');
         }
     }, {
         key: 'formatHTML',
         value: function formatHTML(str) {
-
-            /*
+            /**
              * remove all whitespace, tabs and return lines from string
+             * @param {String} str any string
+             * @name component.formatHTML
+             * @returns formatted HTML
              */
 
-            str = str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
-            return str;
+            return str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
         }
     }]);
 

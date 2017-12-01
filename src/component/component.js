@@ -4,39 +4,56 @@ class RavenComponent {
     constructor(componentName, options) {
         this.componentName = componentName;
 
+        // check if the component is a template or not 
+        // if not, the regular component will be executed
+
         if (!options.isTemplate) {
-            this.target = options.el;
-            this.data = options.data();
-            this.template = options.html;
-            this.el = this.compileHTML(this.convertStringToNode(options.el), this.template, this.data);
-            // get the attriutes for the parent node and transfer
-            this.props = this.getParentAttributes(options.el);
-
-            if (options.helpers) {
-                for (const method in options.helpers) {
-                    if (method) {
-                        this[`$${method}`] = options.helpers[method];
-                    }
-                }
-            }
-
-            if (options.methods) {
-                for (const method in options.methods) {
-                    if (method) {
-                        this[`${method}`] = options.methods[method];
-                    }
-                }
-            }
-
-            this.ravenComponent = true;
+            this.executeComponent(options);
         }
+    }
+    executeComponent(options) {
+
+        /**
+         * All methods and variables from the initial options 
+         * will be exceuted and stored accordingly. Making this
+         * separate method of readability. 
+         * 
+         * @param {Object} options for the component
+         * @name component.executeComponent
+         */
+
+        this.target = options.el;
+        this.data = options.data();
+        this.template = options.html;
+        this.el = this.compileHTML(this.convertStringToNode(options.el), this.template, this.data);
+
+        // get the attriutes for the parent node and transfer
+        this.props = this.getParentAttributes(options.el);
+
+        if (options.helpers) {
+            for (const method in options.helpers) {
+                if (method) {
+                    this[`$${method}`] = options.helpers[method];
+                }
+            }
+        }
+
+        if (options.methods) {
+            for (const method in options.methods) {
+                if (method) {
+                    this[`${method}`] = options.methods[method];
+                }
+            }
+        }
+
+        this.ravenComponent = true;
     }
     getParentAttributes(target) {
         /**
          * Parses attributes and stores them from parent node
          *
          * @param {Object} target any node
-         * @name getParentAttributes
+         * @name component.getParentAttributes
          */
 
         const props = {};
@@ -60,8 +77,9 @@ class RavenComponent {
          * This method compiles html as well as executes various
          * methods to 
          *
-         * @param {Object} target any node
-         * @name compileHTML 
+         * @param {HTMLHtmlElement} target any node
+         * @name component.compileHTML
+         * @returns {HTMLHtmlElement} node
          */
 
         // create parent div for injection
@@ -82,9 +100,9 @@ class RavenComponent {
          * Determines if the traget is a string selector or an actual 
          * DOM element and renders it to the DOM.
          *
-         * @param {Object} node any node
-         * @param {Object} target any node
-         * @name render 
+         * @param {HTMLHtmlElement} node
+         * @param {HTMLHtmlElement} target
+         * @name component.render 
          */
 
         // replace the starting node with the newly compiled DOM component
@@ -96,9 +114,9 @@ class RavenComponent {
          * Determines if the traget is a string selector or an actual 
          * DOM element and renders it to the DOM.
          *
-         * @param {Object} input any node
-         * @returns {Object} actual DOM node
-         * @name convertStringToNode 
+         * @param {HTMLHtmlElement} input
+         * @returns {HTMLHtmlElement} input
+         * @name component.convertStringToNode
          */
 
         const type = (typeof input);
@@ -115,9 +133,9 @@ class RavenComponent {
          * via morphom.
          *
          * @param {Object} props any new data that matches the current
-         * @name update 
+         * @name component.update 
          */
-        
+
         Object.assign(this.data, props);
         morphdom(this.el, this.compileHTML(this.target, this.template, this.data));
     }
@@ -128,10 +146,11 @@ class RavenComponent {
          * template has any declared to be used.
          * 
          * @param {Array} array
-         * @param {Object} node
+         * @param {HTMLHtmlElement} node
+         * @name component.MapAttributes
          * @returns {results} any matched attributes
          */
-        
+
         const results = [];
 
         array.forEach((attr) => {
@@ -145,6 +164,16 @@ class RavenComponent {
         return results;
     }
     bindEvents(node) {
+
+        /**
+         * All available events will be stored in this attributes
+         * array for use in the component. More will be added over
+         * time after testing.
+         * 
+         * @param {HTMLHtmlElement} node
+         * @name component.bindEvents
+         */
+
         const clone = node.cloneNode(true);
 
         const attributes = this.mapAttributes([
@@ -182,6 +211,16 @@ class RavenComponent {
         return clone;
     }
     parseAttributes(node) {
+        /**
+         * This is for custom attributes in the component such as "repeat".
+         * The method will search for the specified attribute and execute.
+         * The reason is to provide a short hand way for custom functionality.
+         * 
+         * @param {HTMLHtmlElement} node
+         * @name component.parseAttributes
+         * @returns {HTMLHtmlElement} clone
+         */
+
         const clone = node.cloneNode(true);
         const attributes = this.mapAttributes(["repeat"], clone);
 
@@ -217,6 +256,19 @@ class RavenComponent {
         return clone;
     }
     parseChild(html, listData, parse) {
+
+        /**
+         * For generating lists, one child component is used as a
+         * template to genearte all the other children with all their
+         * own unqiue data points.
+         * 
+         * @param {String} html
+         * @param {Array} listData
+         * @param {String} parse
+         * @name component.parseChild
+         * @returns {Array} HTMLArray
+         */
+
         let HTMLArray = [];
 
         listData.forEach((item) => {
@@ -237,6 +289,16 @@ class RavenComponent {
         return HTMLArray;
     }
     findReturnableValues(str, obj) {
+        /**
+         * To match the string brackets with the data we will need
+         * to iterate through the object to find returnable values.
+         * 
+         * @param {String} str
+         * @param {Object} obj
+         * @name component.findReturnableValues
+         * @returns {String} search
+         */
+
         let results = false;
         let search = "";
         let searchIndex = 0;
@@ -261,8 +323,16 @@ class RavenComponent {
         return results;
     }
     parseHTML(html, data) {
+        /**
+         * Search for variables inside brackets
+         * 
+         * @param  {String} html && {Object} data object literal data structure
+         * @returns {String} Returns the compiled and formatted HTML based on the data
+         * @name component.parseHTML
+         */
+
         if (html && data) {
-            // search for variables inside brackets
+
             let matches = html.match(/{[^}]*}/g);
 
             if (matches) {
@@ -288,16 +358,23 @@ class RavenComponent {
         return this.formatHTML(html);
     }
     formatString(str) {
+        /**
+         * @param {String} str
+         * @name component.formatString
+         * @returns {String} returns formatted string
+         */
+
         return str.replace(/[\n\r{}\s{1,10}]+/g, '');
     }
     formatHTML(str) {
-
-        /*
+        /**
          * remove all whitespace, tabs and return lines from string
+         * @param {String} str any string
+         * @name component.formatHTML
+         * @returns formatted HTML
          */
 
-        str = str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
-        return str;
+        return str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
     }
 }
 
