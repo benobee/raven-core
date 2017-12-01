@@ -13,13 +13,13 @@ class Raven {
                     return util.hasProps(this.active, props);
                 },
                 findOne(props) {
-                    return util.hasProps(this.active, props)[ 0 ];
+                    return util.hasProps(this.active, props)[0];
                 },
                 update(...props) {
-                    const results = util.hasProps(this.active, props[ 0 ]);
+                    const results = util.hasProps(this.active, props[0]);
 
                     results.forEach((item) => {
-                        item.update(props[ 1 ]);
+                        item.update(props[1]);
                     });
                 }
             };
@@ -49,39 +49,61 @@ class Raven {
         for (const prop in config) {
             // look for config props
             if (prop === "components") {
-                this.components.active = config[ prop ];
+                this.components.active = config[prop];
                 this.emit("componentListRegistered");
             }
         }
     }
     on(event, listener) {
         // create the event if not yet created
-        if (!this.events[ event ]) {
-            this.events[ event ] = [];
+        if (!this.events[event]) {
+            this.events[event] = [];
         }
 
         // add the listener
-        this.events[ event ].push(listener);
+        this.events[event].push(listener);
     }
     emit(event, data) {
         // return if the event doesn't exist, or there are no listeners
-        if (!this.events[ event ] || this.events[ event ].length < 1) {
+        if (!this.events[event] || this.events[event].length < 1) {
             return;
         }
 
         // send the event to all listeners
-        this.events[ event ].forEach((listener) => listener(data || {}));
+        this.events[event].forEach((listener) => listener(data || {}));
         this.history.push({ eventEmitted: event });
     }
+
     component(componentName, config) {
-        // Component factory method
+        /**
+         * Component factory method
+         * @param  {String} componentName Component name
+         * @param  {Object} config        Component configurations
+         * @name Raven.component
+         * @return {Object}               The custom component
+         * @example 
+         *     Raven.component("Button", {
+         *         el: ".button", 
+         *         data() {  
+         *             return {
+         *                 buttonName: 'button-click'
+         *             }
+         *         },
+         *         methods: {
+         *             buttonClick() {
+         *                 alert("CLICKED");
+         *             }
+         *         }
+         *     });
+         */
+        
         config.isTemplate = false;
 
         if (config.template && config.template !== componentName) {
-            this.components.templates[ componentName ] = config;
+            this.components.templates[componentName] = config;
             config.isTemplate = true;
         } else if (!config.html) {
-            config.html = this.components.templates[ componentName ].template;
+            config.html = this.components.templates[componentName].template;
         }
 
         const component = new RavenComponent(componentName, config);

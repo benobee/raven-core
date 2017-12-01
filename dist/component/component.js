@@ -33,16 +33,14 @@ var RavenComponent = function () {
     _createClass(RavenComponent, [{
         key: 'executeComponent',
         value: function executeComponent(options) {
-
             /**
              * All methods and variables from the initial options 
              * will be exceuted and stored accordingly. Making this
              * separate method of readability. 
              * 
              * @param {Object} options for the component
-             * @name component.executeComponent
+             * @private
              */
-
             this.target = options.el;
             this.data = options.data();
             this.template = options.html;
@@ -74,11 +72,9 @@ var RavenComponent = function () {
         value: function getParentAttributes(target) {
             /**
              * Parses attributes and stores them from parent node
-             *
              * @param {Object} target any node
-             * @name component.getParentAttributes
+             * @private
              */
-
             var props = {};
 
             for (var value in target.attributes) {
@@ -103,8 +99,8 @@ var RavenComponent = function () {
              * methods to 
              *
              * @param {HTMLHtmlElement} target any node
-             * @name component.compileHTML
              * @returns {HTMLHtmlElement} node
+             * @private
              */
 
             // create parent div for injection
@@ -129,7 +125,7 @@ var RavenComponent = function () {
              *
              * @param {HTMLHtmlElement} node
              * @param {HTMLHtmlElement} target
-             * @name component.render 
+             * @private
              */
 
             // replace the starting node with the newly compiled DOM component
@@ -145,7 +141,7 @@ var RavenComponent = function () {
              *
              * @param {HTMLHtmlElement} input
              * @returns {HTMLHtmlElement} input
-             * @name component.convertStringToNode
+             * @private
              */
 
             var type = typeof input === 'undefined' ? 'undefined' : _typeof(input);
@@ -164,7 +160,7 @@ var RavenComponent = function () {
              * via morphom.
              *
              * @param {Object} props any new data that matches the current
-             * @name component.update 
+             * @private
              */
 
             Object.assign(this.data, props);
@@ -180,8 +176,8 @@ var RavenComponent = function () {
              * 
              * @param {Array} array
              * @param {HTMLHtmlElement} node
-             * @name component.MapAttributes
              * @returns {results} any matched attributes
+             * @private
              */
 
             var results = [];
@@ -207,7 +203,7 @@ var RavenComponent = function () {
              * time after testing.
              * 
              * @param {HTMLHtmlElement} node
-             * @name component.bindEvents
+             * @private
              */
 
             var clone = node.cloneNode(true);
@@ -244,8 +240,8 @@ var RavenComponent = function () {
              * The reason is to provide a short hand way for custom functionality.
              * 
              * @param {HTMLHtmlElement} node
-             * @name component.parseAttributes
              * @returns {HTMLHtmlElement} clone
+             * @private
              */
 
             var clone = node.cloneNode(true);
@@ -294,8 +290,8 @@ var RavenComponent = function () {
              * @param {String} html
              * @param {Array} listData
              * @param {String} parse
-             * @name component.parseChild
              * @returns {Array} HTMLArray
+             * @private
              */
 
             var HTMLArray = [];
@@ -326,8 +322,8 @@ var RavenComponent = function () {
              * 
              * @param {String} str
              * @param {Object} obj
-             * @name component.findReturnableValues
              * @returns {String} search
+             * @private
              */
 
             var results = false;
@@ -362,7 +358,7 @@ var RavenComponent = function () {
              * 
              * @param  {String} html && {Object} data object literal data structure
              * @returns {String} Returns the compiled and formatted HTML based on the data
-             * @name component.parseHTML
+             * @private
              */
 
             if (html && data) {
@@ -396,8 +392,8 @@ var RavenComponent = function () {
         value: function formatString(str) {
             /**
              * @param {String} str
-             * @name component.formatString
              * @returns {String} returns formatted string
+             * @private
              */
 
             return str.replace(/[\n\r{}\s{1,10}]+/g, '');
@@ -408,8 +404,8 @@ var RavenComponent = function () {
             /**
              * remove all whitespace, tabs and return lines from string
              * @param {String} str any string
-             * @name component.formatHTML
              * @returns formatted HTML
+             * @private
              */
 
             return str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');

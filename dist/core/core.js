@@ -110,7 +110,28 @@ var Raven = function () {
     }, {
         key: "component",
         value: function component(componentName, config) {
-            // Component factory method
+            /**
+             * Component factory method
+             * @param  {String} componentName Component name
+             * @param  {Object} config        Component configurations
+             * @name Raven.component
+             * @return {Object}               The custom component
+             * @example 
+             *     Raven.component("Button", {
+             *         el: ".button", 
+             *         data() {  
+             *             return {
+             *                 buttonName: 'button-click'
+             *             }
+             *         },
+             *         methods: {
+             *             buttonClick() {
+             *                 alert("CLICKED");
+             *             }
+             *         }
+             *     });
+             */
+
             config.isTemplate = false;
 
             if (config.template && config.template !== componentName) {
