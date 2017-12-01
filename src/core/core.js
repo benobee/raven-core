@@ -2,6 +2,8 @@ import RavenComponent from "../component/component";
 import util from "../util/util";
 
 /**
+ * Singleton. 
+ * 
  * @name Raven
  */
 

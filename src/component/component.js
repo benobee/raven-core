@@ -2,6 +2,7 @@ import morphdom from 'morphdom';
 
 /**
  * @name RavenComponent
+ * @private
  */
 
 class RavenComponent {

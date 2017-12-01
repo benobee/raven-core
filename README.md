@@ -6,9 +6,10 @@
 -   [Raven.on](#ravenon)
 -   [Raven.emit](#ravenemit)
 -   [Raven.component](#ravencomponent)
--   [RavenComponent](#ravencomponent-1)
 
 ## Raven
+
+Singleton.
 
 ## Raven.on
 
@@ -57,5 +58,3 @@ Raven.component("Button", {
 ```
 
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The custom component
-
-## RavenComponent
