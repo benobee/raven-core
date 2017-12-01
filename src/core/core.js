@@ -1,6 +1,10 @@
 import RavenComponent from "../component/component";
 import util from "../util/util";
 
+/**
+ * @name Raven
+ */
+
 class Raven {
     constructor() {
         if (!Raven.instance) {
@@ -81,7 +85,7 @@ class Raven {
      * PUB/SUB Pattern. Topic listener that triggers a callback when the 
      * particular topic is published.
      * 
-     * @param  {String} event
+     * @param  {string} event
      * @param  {Object} listener
      * @name Raven.on
      */
@@ -99,7 +103,7 @@ class Raven {
 
     /**
      * PUB/SUB Pattern.
-     * @param  {String} event
+     * @param  {string} event
      * @param  {Object} data
      * @name Raven.emit
      */
@@ -118,7 +122,7 @@ class Raven {
 
     /**
      * Component factory method
-     * @param  {String} componentName Component name
+     * @param  {string} componentName Component name
      * @param  {Object} config        Component configurations
      * @name Raven.component
      * @return {Object}               The custom component

@@ -16,8 +16,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * @name RavenComponent
+ */
+
 var RavenComponent = function () {
-    // class constructor method
     function RavenComponent(componentName, options) {
         _classCallCheck(this, RavenComponent);
 
@@ -37,6 +40,7 @@ var RavenComponent = function () {
      * separate method of readability. 
      * 
      * @param {Object} options for the component
+     * @memberof RavenComponent
      * @private
      */
 
@@ -73,6 +77,7 @@ var RavenComponent = function () {
         /**
          * Parses attributes and stores them from parent node
          * @param {Object} target any node
+         * @memberof RavenComponent
          * @private
          */
 
@@ -103,6 +108,7 @@ var RavenComponent = function () {
          *
          * @param {HTMLHtmlElement} target any node
          * @returns {HTMLHtmlElement} node
+         * @memberof RavenComponent
          * @private
          */
 
@@ -129,6 +135,7 @@ var RavenComponent = function () {
          *
          * @param {HTMLHtmlElement} node
          * @param {HTMLHtmlElement} target
+         * @memberof RavenComponent
          * @private
          */
 
@@ -146,6 +153,7 @@ var RavenComponent = function () {
          *
          * @param {HTMLHtmlElement} input
          * @returns {HTMLHtmlElement} input
+         * @memberof RavenComponent
          * @private
          */
 
@@ -167,6 +175,7 @@ var RavenComponent = function () {
          * via morphom.
          *
          * @param {Object} props any new data that matches the current
+         * @memberof RavenComponent
          * @private
          */
 
@@ -184,6 +193,7 @@ var RavenComponent = function () {
          * @param {Array} array
          * @param {HTMLHtmlElement} node
          * @returns {results} any matched attributes
+         * @memberof RavenComponent
          * @private
          */
 
@@ -209,6 +219,7 @@ var RavenComponent = function () {
          * time after testing.
          * 
          * @param {HTMLHtmlElement} node
+         * @memberof RavenComponent
          * @private
          */
 
@@ -248,6 +259,7 @@ var RavenComponent = function () {
          * 
          * @param {HTMLHtmlElement} node
          * @returns {HTMLHtmlElement} clone
+         * @memberof RavenComponent
          * @private
          */
 
@@ -296,10 +308,11 @@ var RavenComponent = function () {
          * template to genearte all the other children with all their
          * own unqiue data points.
          * 
-         * @param {String} html
+         * @param {string} html
          * @param {Array} listData
-         * @param {String} parse
+         * @param {string} parse
          * @returns {Array} HTMLArray
+         * @memberof RavenComponent
          * @private
          */
 
@@ -330,9 +343,10 @@ var RavenComponent = function () {
          * To match the string brackets with the data we will need
          * to iterate through the object to find returnable values.
          * 
-         * @param {String} str
+         * @param {string} str
          * @param {Object} obj
-         * @returns {String} search
+         * @returns {string} search
+         * @memberof RavenComponent
          * @private
          */
 
@@ -365,8 +379,9 @@ var RavenComponent = function () {
         /**
          * Search for variables inside brackets
          * 
-         * @param  {String} html && {Object} data object literal data structure
-         * @returns {String} Returns the compiled and formatted HTML based on the data
+         * @param  {string} html && {Object} data object literal data structure
+         * @returns {string} Returns the compiled and formatted HTML based on the data
+         * @memberof RavenComponent
          * @private
          */
 
@@ -403,8 +418,9 @@ var RavenComponent = function () {
         }
 
         /**
-         * @param {String} str
-         * @returns {String} returns formatted string
+         * @param {string} str
+         * @returns {string} returns formatted string
+         * @memberof RavenComponent
          * @private
          */
 
@@ -416,8 +432,9 @@ var RavenComponent = function () {
 
         /**
          * remove all whitespace, tabs and return lines from string
-         * @param {String} str any string
+         * @param {string} str any string
          * @returns formatted HTML
+         * @memberof RavenComponent
          * @private
          */
 

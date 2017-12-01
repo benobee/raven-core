@@ -2,9 +2,13 @@
 
 ### Table of Contents
 
+-   [Raven](#raven)
 -   [Raven.on](#ravenon)
 -   [Raven.emit](#ravenemit)
 -   [Raven.component](#ravencomponent)
+-   [RavenComponent](#ravencomponent-1)
+
+## Raven
 
 ## Raven.on
 
@@ -13,7 +17,7 @@ particular topic is published.
 
 **Parameters**
 
--   `event` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `event` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 -   `listener` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
 ## Raven.emit
@@ -22,7 +26,7 @@ PUB/SUB Pattern.
 
 **Parameters**
 
--   `event` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `event` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 -   `data` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
 ## Raven.component
@@ -31,7 +35,7 @@ Component factory method
 
 **Parameters**
 
--   `componentName` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Component name
+-   `componentName` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Component name
 -   `config` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Component configurations
 
 **Examples**
@@ -53,3 +57,5 @@ Raven.component("Button", {
 ```
 
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The custom component
+
+## RavenComponent

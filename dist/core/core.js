@@ -18,6 +18,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * @name Raven
+ */
+
 var Raven = function () {
     function Raven() {
         _classCallCheck(this, Raven);
@@ -107,7 +111,7 @@ var Raven = function () {
          * PUB/SUB Pattern. Topic listener that triggers a callback when the 
          * particular topic is published.
          * 
-         * @param  {String} event
+         * @param  {string} event
          * @param  {Object} listener
          * @name Raven.on
          */
@@ -126,7 +130,7 @@ var Raven = function () {
 
         /**
          * PUB/SUB Pattern.
-         * @param  {String} event
+         * @param  {string} event
          * @param  {Object} data
          * @name Raven.emit
          */
@@ -148,7 +152,7 @@ var Raven = function () {
 
         /**
          * Component factory method
-         * @param  {String} componentName Component name
+         * @param  {string} componentName Component name
          * @param  {Object} config        Component configurations
          * @name Raven.component
          * @return {Object}               The custom component

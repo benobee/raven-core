@@ -1,7 +1,10 @@
 import morphdom from 'morphdom';
 
+/**
+ * @name RavenComponent
+ */
+
 class RavenComponent {
-    // class constructor method
     constructor(componentName, options) {
         this.componentName = componentName;
 
@@ -20,6 +23,7 @@ class RavenComponent {
      * separate method of readability. 
      * 
      * @param {Object} options for the component
+     * @memberof RavenComponent
      * @private
      */
 
@@ -55,6 +59,7 @@ class RavenComponent {
     /**
      * Parses attributes and stores them from parent node
      * @param {Object} target any node
+     * @memberof RavenComponent
      * @private
      */
 
@@ -84,6 +89,7 @@ class RavenComponent {
      *
      * @param {HTMLHtmlElement} target any node
      * @returns {HTMLHtmlElement} node
+     * @memberof RavenComponent
      * @private
      */
 
@@ -109,6 +115,7 @@ class RavenComponent {
      *
      * @param {HTMLHtmlElement} node
      * @param {HTMLHtmlElement} target
+     * @memberof RavenComponent
      * @private
      */
 
@@ -125,6 +132,7 @@ class RavenComponent {
      *
      * @param {HTMLHtmlElement} input
      * @returns {HTMLHtmlElement} input
+     * @memberof RavenComponent
      * @private
      */
 
@@ -145,6 +153,7 @@ class RavenComponent {
      * via morphom.
      *
      * @param {Object} props any new data that matches the current
+     * @memberof RavenComponent
      * @private
      */
 
@@ -160,6 +169,7 @@ class RavenComponent {
      * @param {Array} array
      * @param {HTMLHtmlElement} node
      * @returns {results} any matched attributes
+     * @memberof RavenComponent
      * @private
      */
 
@@ -184,6 +194,7 @@ class RavenComponent {
      * time after testing.
      * 
      * @param {HTMLHtmlElement} node
+     * @memberof RavenComponent
      * @private
      */
 
@@ -233,6 +244,7 @@ class RavenComponent {
      * 
      * @param {HTMLHtmlElement} node
      * @returns {HTMLHtmlElement} clone
+     * @memberof RavenComponent
      * @private
      */
 
@@ -278,10 +290,11 @@ class RavenComponent {
      * template to genearte all the other children with all their
      * own unqiue data points.
      * 
-     * @param {String} html
+     * @param {string} html
      * @param {Array} listData
-     * @param {String} parse
+     * @param {string} parse
      * @returns {Array} HTMLArray
+     * @memberof RavenComponent
      * @private
      */
 
@@ -311,9 +324,10 @@ class RavenComponent {
      * To match the string brackets with the data we will need
      * to iterate through the object to find returnable values.
      * 
-     * @param {String} str
+     * @param {string} str
      * @param {Object} obj
-     * @returns {String} search
+     * @returns {string} search
+     * @memberof RavenComponent
      * @private
      */
 
@@ -346,8 +360,9 @@ class RavenComponent {
     /**
      * Search for variables inside brackets
      * 
-     * @param  {String} html && {Object} data object literal data structure
-     * @returns {String} Returns the compiled and formatted HTML based on the data
+     * @param  {string} html && {Object} data object literal data structure
+     * @returns {string} Returns the compiled and formatted HTML based on the data
+     * @memberof RavenComponent
      * @private
      */
 
@@ -381,8 +396,9 @@ class RavenComponent {
 
 
     /**
-     * @param {String} str
-     * @returns {String} returns formatted string
+     * @param {string} str
+     * @returns {string} returns formatted string
+     * @memberof RavenComponent
      * @private
      */
 
@@ -393,11 +409,12 @@ class RavenComponent {
 
     /**
      * remove all whitespace, tabs and return lines from string
-     * @param {String} str any string
+     * @param {string} str any string
      * @returns formatted HTML
+     * @memberof RavenComponent
      * @private
      */
-    
+
     formatHTML(str) {
         return str.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, '');
     }
